@@ -1,0 +1,217 @@
+:root {
+  /* Sophisticated dark color palette */
+  --bg-primary: #0d0d0d;
+  --bg-secondary: #1a1a1a;
+  --bg-tertiary: #2a2a2a;
+  --bg-card: #1e1e1e;
+  --bg-card-hover: #252525;
+  --bg-card-accent: #2d1b1b;
+  --text-primary: #ffffff;
+  --text-secondary: #e0e0e0;
+  --text-muted: #9a9a9a;
+  --accent-primary: #FAC853;
+  --accent-secondary: #4ECDC4;
+  --accent-warm: #8b4513;
+  --accent-red: #6b2c2c;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --shadow: rgba(0, 0, 0, 0.6);
+  --shadow-soft: rgba(0, 0, 0, 0.3);
+  --glass: rgba(26, 26, 26, 0.8);
+  --gradient-overlay: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  transition: background-color 0.3s ease;
+}
+
+/* Smooth scrolling for the entire page */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Enhanced scrolling performance */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Optimize animations for better performance */
+.company-list-item {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+/* Bento box scroll animations */
+.bento-card-3d {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+/* Smooth parallax scrolling */
+.parallax-container {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Enhanced scroll performance */
+.scroll-section {
+  contain: layout style paint;
+  will-change: transform, opacity;
+}
+
+.company-grid-container {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.device {
+  position: fixed;
+  top: 60px; /* Space for filter bar */
+  left: 0;
+  width: 100vw;
+  height: calc(100vh - 60px);
+  overflow: hidden;
+  background: transparent;
+  contain: strict;
+}
+
+/* Touch-friendly interactions */
+button {
+  -webkit-tap-highlight-color: rgba(78, 205, 196, 0.3);
+  touch-action: manipulation;
+  min-height: 44px; /* iOS accessibility guidelines */
+  min-width: 44px;
+}
+
+/* Smooth scrolling for company detail page */
+.company-detail {
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .device {
+    top: 80px; /* More space on mobile */
+    height: calc(100vh - 80px);
+  }
+  
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+}
+
+/* Focus and touch styles for accessibility */
+button:focus,
+input:focus {
+  outline: 2px solid #4ECDC4;
+  outline-offset: 2px;
+}
+
+/* Touch feedback for better UX */
+button:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease;
+}
+
+/* Larger touch targets for filter buttons */
+.filter-bar button {
+  min-height: 48px;
+  padding: 12px 16px;
+}
+
+/* Improved touch scrolling */
+.company-detail,
+.device {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Loading states */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-size: 18px;
+  color: var(--text-secondary);
+  background: var(--bg-primary);
+}
+
+/* Floating action button */
+.floating-filter-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  color: var(--bg-primary);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 32px var(--shadow);
+  z-index: 1000;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+/* Enhanced animations for dark mode */
+@keyframes glow {
+  0%, 100% { box-shadow: 0 8px 32px var(--shadow); }
+  50% { box-shadow: 0 12px 40px var(--shadow), 0 0 20px var(--accent-primary); }
+}
+
+.bento-card {
+  animation: glow 3s ease-in-out infinite;
+}
+
+/* Smooth transitions for all interactive elements */
+button, .company-item, .filter-card {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced responsiveness for company items */
+.company-item {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+/* Form input styling for better readability */
+input, textarea, select {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 0 2px rgba(250, 200, 83, 0.2) !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+/* Admin panel enhancements */
+.admin-form-container {
+  background: var(--gradient-overlay), var(--bg-card);
+}
+
+/* Company card hover effects */
+.company-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px var(--shadow);
+}

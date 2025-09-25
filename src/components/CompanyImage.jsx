@@ -1,0 +1,104 @@
+import React, { useState, useEffect } from 'react';
+import { getEmojiPlaceholder } from '../utils/emojiPlaceholders';
+
+const CompanyImage = ({ company, imageType = 'logo', style, className }) => {
+  const [imageSrc, setImageSrc] = useState(null);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    // Reset state when company or imageType changes
+    setImageSrc(null);
+    setError(false);
+
+    if (!company || !company.id) {
+        setError(true);
+        return;
+    }
+
+    // First check if we have a direct URL from Supabase
+    if (imageType === 'logo' && company.logo && company.logo.trim() !== '') {
+        // Use logo URL from Supabase
+        setImageSrc(company.logo);
+        return;
+    } else if (imageType === 'photo' && company.headerImage && company.headerImage.trim() !== '') {
+        // Use header image URL from Supabase
+        setImageSrc(company.headerImage);
+        return;
+    }
+
+    // Fallback to file system if no URL is provided
+    const extensions = ['png', 'jpg', 'jpeg', 'svg', 'webp'];
+    const basePath = `/images/companies/${imageType}s/${company.id}`;
+    
+    // Set a preferred initial path. The onError will handle cycling through others.
+    const initialSrc = `${basePath}.${imageType === 'logo' ? 'png' : 'jpg'}`;
+    setImageSrc(`${initialSrc}?t=${new Date().getTime()}`); // Cache-busting timestamp
+
+  }, [company, imageType]);
+
+  const handleError = () => {
+    const currentSrc = imageSrc;
+    if (!currentSrc) {
+        setError(true);
+        return;
+    }
+
+    // Check if we're using a Supabase URL (not a local file path)
+    if (currentSrc.startsWith('http') || 
+        (imageType === 'logo' && company.logo === currentSrc) || 
+        (imageType === 'photo' && company.headerImage === currentSrc)) {
+        // If URL from Supabase fails, fall back to file system
+        const extensions = ['png', 'jpg', 'jpeg', 'svg', 'webp'];
+        const basePath = `/images/companies/${imageType}s/${company.id}`;
+        const initialSrc = `${basePath}.${imageType === 'logo' ? 'png' : 'jpg'}`;
+        setImageSrc(`${initialSrc}?t=${new Date().getTime()}`);
+        return;
+    }
+
+    // Handle local file paths
+    const extensions = ['png', 'jpg', 'jpeg', 'svg', 'webp'];
+    const currentExt = currentSrc.split('.').pop().split('?')[0]; // Remove query params
+    const currentIndex = extensions.indexOf(currentExt);
+    
+    // Try the next extension in the list
+    if (currentIndex > -1 && currentIndex < extensions.length - 1) {
+        const nextExt = extensions[currentIndex + 1];
+        const nextSrc = currentSrc.replace(`.${currentExt}`, `.${nextExt}`).split('?')[0];
+        setImageSrc(`${nextSrc}?t=${new Date().getTime()}`); // Cache-busting timestamp
+    } else {
+        // If we've tried all extensions, show the fallback
+        setError(true);
+    }
+  };
+
+  if (error || !imageSrc) {
+    return (
+      <div
+        style={{
+          ...style,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: 'var(--bg-secondary)',
+          fontSize: (style && style.height) ? style.height / 2 : '24px', // Estimate font size from height
+          userSelect: 'none'
+        }}
+        className={className}
+      >
+        {getEmojiPlaceholder(company)}
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={imageSrc}
+      alt={`${company.name} ${imageType}`}
+      style={style}
+      className={className}
+      onError={handleError}
+    />
+  );
+};
+
+export default CompanyImage;
