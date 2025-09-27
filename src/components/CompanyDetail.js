@@ -193,7 +193,7 @@ export function CompanyDetail() {
         }}
           style={{ 
           padding: "20px 0 0", 
-          maxWidth: "100%", 
+          maxWidth: "90%",
           margin: "0 auto",
           borderRadius: "16px",
           overflow: "hidden",
