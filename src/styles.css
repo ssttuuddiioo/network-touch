@@ -32,14 +32,28 @@ body {
   transition: background-color 0.3s ease;
 }
 
-/* Smooth scrolling for the entire page */
+/* Smooth scrolling for the entire page and hide scrollbars */
 html {
   scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
 }
 
-/* Enhanced scrolling performance */
+/* Hide scrollbar for Chrome, Safari and Opera */
+html::-webkit-scrollbar {
+  display: none;
+}
+
+/* Enhanced scrolling performance and hide scrollbars globally */
 * {
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* Hide scrollbar for all elements in Chrome, Safari and Opera */
+*::-webkit-scrollbar {
+  display: none;
 }
 
 /* Optimize animations for better performance */
@@ -98,6 +112,13 @@ button {
 .company-detail {
   overflow-y: auto;
   scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.company-detail::-webkit-scrollbar {
+  display: none;
 }
 
 /* Responsive design */

@@ -207,10 +207,11 @@ export function CompanyDetail() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
           style={{
-            margin: "0",
+            margin: "0 auto",
             overflow: "hidden",
             backgroundColor: "transparent",
-            height: "450px",
+            width: "min(100%, 600px)",
+            aspectRatio: "1/1",
             position: "relative",
             display: "flex",
             alignItems: "center",
@@ -224,7 +225,7 @@ export function CompanyDetail() {
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
-                borderRadius: "16px 16px 0 0"
+                borderRadius: "24px"
               }}
            />
            
