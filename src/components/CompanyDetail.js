@@ -192,8 +192,8 @@ export function CompanyDetail() {
           ease: [0.25, 0.46, 0.45, 0.94] 
         }}
           style={{ 
-          padding: "20px 20px 0", 
-          maxWidth: "900px", 
+          padding: "20px 0 0", 
+          maxWidth: "100%", 
           margin: "0 auto",
           borderRadius: "16px",
           overflow: "hidden",
@@ -210,7 +210,7 @@ export function CompanyDetail() {
             margin: "0 auto",
             overflow: "hidden",
             backgroundColor: "transparent",
-            width: "min(100%, 600px)",
+            width: "100%",
             aspectRatio: "1/1",
             position: "relative",
             display: "flex",
@@ -269,7 +269,7 @@ export function CompanyDetail() {
           style={{
             margin: "0 0 20px",
             backgroundColor: "#121212",
-            padding: "20px",
+            padding: "20px 0",
           }}
         >
           {/* Content Grid - QR Code on left, Company Name, Description and Tags on right */}
@@ -409,7 +409,7 @@ export function CompanyDetail() {
             gap: "20px",
             alignItems: "center",
             justifyContent: "center",
-            padding: "0 20px 20px"
+            padding: "0 0 20px"
           }}
         >
           {/* Navigation Arrows */}
