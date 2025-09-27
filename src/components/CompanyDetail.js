@@ -211,7 +211,7 @@ export function CompanyDetail() {
             overflow: "hidden",
             backgroundColor: "transparent",
             width: "100%",
-            aspectRatio: "4/4.5",
+            aspectRatio: "3.5/4",
             position: "relative",
             display: "flex",
             alignItems: "center",
