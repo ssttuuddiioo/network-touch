@@ -191,8 +191,8 @@ export function CompanyDetail() {
           duration: 0.4, 
           ease: [0.25, 0.46, 0.45, 0.94] 
         }}
-        style={{ 
-          padding: "50px 30px 0", 
+          style={{ 
+          padding: "20px 20px 0", 
           maxWidth: "900px", 
           margin: "0 auto",
           borderRadius: "16px",
@@ -267,16 +267,16 @@ export function CompanyDetail() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}
           style={{
-            margin: "0 0 40px",
+            margin: "0 0 20px",
             backgroundColor: "#121212",
-            padding: "30px 20px 20px",
+            padding: "20px",
           }}
         >
           {/* Content Grid - QR Code on left, Company Name, Description and Tags on right */}
           <div style={{ 
             display: "grid",
             gridTemplateColumns: "auto 1fr",
-            gap: "30px",
+            gap: "20px",
             alignItems: "start"
           }}>
             {/* QR Code Card - Left Side */}
@@ -319,7 +319,7 @@ export function CompanyDetail() {
             <div>
               {/* Company Name */}
               <h2 style={{ 
-                margin: "0 0 30px 0", 
+                margin: "0 0 20px 0", 
                 fontSize: "42px", 
                 color: "white",
                 fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
@@ -330,7 +330,7 @@ export function CompanyDetail() {
 
               {/* Description and Tags */}
               {/* Description */}
-              <div style={{ marginBottom: "25px" }}>
+              <div style={{ marginBottom: "20px" }}>
                 <p style={{
                   fontSize: "18px",
                   color: "white",
@@ -409,7 +409,7 @@ export function CompanyDetail() {
             gap: "20px",
             alignItems: "center",
             justifyContent: "center",
-            padding: "0 20px 40px"
+            padding: "0 20px 20px"
           }}
         >
           {/* Navigation Arrows */}
