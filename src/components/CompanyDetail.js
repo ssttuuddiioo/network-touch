@@ -201,115 +201,65 @@ export function CompanyDetail() {
         }}
       >
         
-        {/* Image Container with Description Overlay */}
-        <div style={{
-          position: "relative",
-          width: "100%",
-          marginBottom: "20px"
-        }}>
-          {/* Large Photo Section - Now at the top with logo overlay */}
-          <motion.section
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            style={{
-              margin: "0 auto",
-              overflow: "hidden",
-              backgroundColor: "transparent",
-              width: "100%",
-              aspectRatio: "3.5/4",
-              position: "relative",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center"
-            }}
-          >
-            <CompanyImage
-                company={company}
-                imageType="photo"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  borderRadius: "24px"
-                }}
-             />
-             
-            {/* Logo overlay in top left corner */}
-            <motion.div
-              layoutId={`company-${company.id}`}
+        {/* Large Photo Section - Now at the top with logo overlay */}
+        <motion.section
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          style={{
+            margin: "0 auto 20px",
+            overflow: "hidden",
+            backgroundColor: "transparent",
+            width: "100%",
+            aspectRatio: "3.5/2.5",
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+        >
+          <CompanyImage
+              company={company}
+              imageType="photo"
               style={{
-                position: "absolute",
-                top: "20px",
-                left: "20px",
-                width: "80px",
-                height: "80px",
-                borderRadius: "50%",
-                overflow: "hidden",
-                backgroundColor: "white",
-                border: "2px solid white",
-                boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                zIndex: 10
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                borderRadius: "24px"
               }}
-            >
-              <CompanyImage 
-                  company={company}
-                  imageType="logo"
-                  style={{
-                    width: "80%",
-                    height: "80%",
-                    objectFit: "contain"
-                  }}
-              />
-            </motion.div>
-          </motion.section>
-          
-          {/* Description Overlay - Positioned 300px higher */}
+           />
+           
+          {/* Logo overlay in top left corner */}
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
+            layoutId={`company-${company.id}`}
             style={{
               position: "absolute",
-              bottom: "300px",
-              left: 0,
-              right: 0,
-              padding: "20px",
-              backgroundColor: "rgba(0,0,0,0.7)",
-              backdropFilter: "blur(10px)",
-              borderRadius: "16px",
-              zIndex: 5
+              top: "20px",
+              left: "20px",
+              width: "80px",
+              height: "80px",
+              borderRadius: "50%",
+              overflow: "hidden",
+              backgroundColor: "white",
+              border: "2px solid white",
+              boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 10
             }}
           >
-            {/* Company Name */}
-            <h2 style={{ 
-              margin: "0 0 20px 0", 
-              fontSize: "42px", 
-              color: "white",
-              fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-              fontWeight: "600",
-            }}>
-              {company.name}
-            </h2>
-            
-            {/* Description */}
-            <div style={{ marginBottom: "20px" }}>
-              <p style={{
-                fontSize: "18px",
-                color: "white",
-                lineHeight: "1.6",
-                margin: "0",
-                fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-                opacity: 0.9
-              }}>
-                {company.description}
-              </p>
-            </div>
+            <CompanyImage 
+                company={company}
+                imageType="logo"
+                style={{
+                  width: "80%",
+                  height: "80%",
+                  objectFit: "contain"
+                }}
+            />
           </motion.div>
-        </div>
+        </motion.section>
         
         {/* Company Name, QR Code, Description, and Tags Section */}
         <motion.section
@@ -367,6 +317,31 @@ export function CompanyDetail() {
 
             {/* Right side content */}
             <div>
+              {/* Company Name */}
+              <h2 style={{ 
+                margin: "0 0 20px 0", 
+                fontSize: "42px", 
+                color: "white",
+                fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+                fontWeight: "600",
+              }}>
+                {company.name}
+              </h2>
+
+              {/* Description and Tags */}
+              {/* Description */}
+              <div style={{ marginBottom: "20px" }}>
+                <p style={{
+                  fontSize: "18px",
+                  color: "white",
+                  lineHeight: "1.6",
+                  margin: "0",
+                  fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+                  opacity: 0.9
+                }}>
+                  {company.description}
+                </p>
+              </div>
 
               {/* Industry Tags */}
               {((company.industry && company.industry.length > 0) || (company.modifiers && company.modifiers.length > 0)) && (
