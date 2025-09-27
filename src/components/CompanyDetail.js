@@ -519,47 +519,7 @@ export function CompanyDetail() {
         </motion.section>
 
 
-        {/* Timer indicator */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1 }}
-          style={{
-            position: "fixed",
-            bottom: "20px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            backgroundColor: "rgba(0,0,0,0.7)",
-            color: "white",
-            padding: "8px 16px",
-            borderRadius: "20px",
-            fontSize: "14px",
-            fontWeight: "600",
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            zIndex: 1000
-          }}
-        >
-          <motion.div 
-            animate={{ 
-              scale: [1, 1.2, 1],
-              opacity: [1, 0.8, 1]
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            style={{ 
-              width: "10px", 
-              height: "10px", 
-              borderRadius: "50%", 
-              backgroundColor: "#F8D57E" 
-            }}
-          ></motion.div>
-          Auto-return in {Math.floor(timeRemaining / 60)}:{(timeRemaining % 60).toString().padStart(2, '0')}
-        </motion.div>
+{/* Timer functionality is still active but visual indicator is hidden */}
         
         {/* Add bottom padding */}
         <div style={{ height: "40px" }}></div>
