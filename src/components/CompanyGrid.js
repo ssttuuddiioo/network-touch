@@ -44,6 +44,10 @@ export function CompanyGrid() {
   React.useEffect(() => {
     const loadData = () => {
       setLoading(true);
+      // Clear localStorage cache first
+      localStorage.clear();
+      console.log('Cleared localStorage cache');
+      
       loadCompaniesWithCache(csvCompanies => {
         setCompanies(csvCompanies);
         console.log('Loaded companies in CompanyGrid:', csvCompanies.length);
@@ -433,7 +437,7 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
         bottom: "0",
         backgroundColor: "var(--bg-primary)",
         overflow: "auto",
-        padding: "40px 0",
+        padding: "40px 0 350px 0", // Increased bottom padding to 300px
         scrollBehavior: "smooth"
       }}
     >
@@ -442,8 +446,7 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
             padding: "0 50px"
           }}>
             
-
-            {/* Dynamic Tag Filter */}
+            {/* Header Section */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -520,85 +523,6 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
                   </motion.button>
                 </motion.div>
               )}
-
-              {/* Tag Filter Section */}
-              <div style={{
-                display: "flex",
-                alignItems: "center",
-                flexWrap: "wrap",
-                gap: "16px",
-                marginBottom: "20px"
-              }}>
-                {/* Clear Filters Button - Only visible when filters are active */}
-                {selectedTags.length > 0 && (
-                  <motion.button
-                    onClick={() => setSelectedTags([])}
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.4, delay: 0.3 }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    style={{
-                      padding: "12px 24px",
-                      backgroundColor: "var(--accent-red)",
-                      color: "white",
-                      border: "2px solid var(--accent-red)",
-                      borderRadius: "30px",
-                      cursor: "pointer",
-                      fontSize: "16px",
-                      fontWeight: "700",
-                      fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.5px",
-                      boxShadow: "0 4px 16px rgba(255,0,0,0.3)",
-                      minWidth: "140px"
-                    }}
-                  >
-                    Clear All
-                  </motion.button>
-                )}
-
-                {/* Dynamic Tag Filter Pills */}
-                <div style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: "12px",
-                  width: "100%"
-                }}>
-                  {availableTags.map((tag, index) => (
-                  <motion.button
-                    key={tag}
-                    onClick={() => toggleTag(tag)}
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ 
-                      duration: 0.4,
-                      delay: 0.4 + index * 0.05,
-                      type: "spring",
-                      stiffness: 300
-                    }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    style={{
-                      padding: "8px 20px",
-                      backgroundColor: selectedTags.includes(tag) ? getIndustryColor(tag) : "var(--bg-card)",
-                      color: selectedTags.includes(tag) ? "#000000" : "var(--text-primary)",
-                      border: `2px solid ${selectedTags.includes(tag) ? getIndustryColor(tag) : "var(--border)"}`,
-                      borderRadius: "25px",
-                      cursor: "pointer",
-                      fontSize: "14px",
-                      fontWeight: "600",
-                      fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.5px",
-                      boxShadow: selectedTags.includes(tag) ? "0 4px 12px rgba(0,0,0,0.2)" : "none"
-                    }}
-                  >
-                    {tag}
-                  </motion.button>
-                ))}
-                </div>
-              </div>
             </motion.div>
 
         {filteredCompanies.map((company, index) => (
@@ -625,12 +549,12 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
             }}
             onClick={() => onCompanyClick(company)}
             style={{
-              padding: "48px 0",
-              borderBottom: "2px solid var(--text-primary)",
+              padding: "20px 0",
+              borderBottom: "1px solid var(--text-primary)",
               cursor: "pointer",
               display: "flex",
               alignItems: "flex-start",
-              gap: "32px"
+              gap: "16px"
             }}
             whileHover={{ 
               backgroundColor: "var(--bg-card)",
@@ -658,8 +582,8 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
                 ease: [0.25, 0.46, 0.45, 0.94]
               }}
               style={{
-                width: "64px",
-                height: "64px",
+                width: "48px",
+                height: "48px",
                 borderRadius: "50%",
                 backgroundColor: "var(--bg-card)",
                 border: "1px solid var(--border)",
@@ -671,7 +595,7 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
             >
               {!isValidLogoUrl(company.logo) ? (
                 <span style={{ 
-                  fontSize: "32px",
+                  fontSize: "24px",
                   userSelect: "none"
                 }}>
                   {getEmojiPlaceholder(company)}
@@ -688,7 +612,7 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
                   }}
                   onError={(e) => {
                     e.target.style.display = "none";
-                    e.target.parentElement.innerHTML = `<span style="font-size: 32px; user-select: none;">${getEmojiPlaceholder(company)}</span>`;
+                    e.target.parentElement.innerHTML = `<span style="font-size: 24px; user-select: none;">${getEmojiPlaceholder(company)}</span>`;
                   }}
                 />
               )}
@@ -715,8 +639,8 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
                   ease: [0.25, 0.46, 0.45, 0.94]
                 }}
                 style={{
-                  margin: "0 0 12px 0",
-                  fontSize: "36px",
+                  margin: "0 0 6px 0",
+                  fontSize: "24px",
                   fontWeight: "700",
                   color: "var(--text-primary)",
                   fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif"
@@ -735,11 +659,17 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
                   ease: [0.25, 0.46, 0.45, 0.94]
                 }}
                 style={{
-                  margin: "0 0 20px 0",
-                  fontSize: "18px",
+                  margin: "0 0 10px 0",
+                  fontSize: "14px",
                   color: "var(--text-secondary)",
-                  lineHeight: "1.6",
-                  fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif"
+                  lineHeight: "1.4",
+                  fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+                  maxHeight: "60px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: "-webkit-box",
+                  WebkitLineClamp: 3,
+                  WebkitBoxOrient: "vertical"
                 }}
               >
                 {company.description}
@@ -757,7 +687,7 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
                 style={{
                   display: "flex",
                   flexWrap: "wrap",
-                  gap: "8px",
+                  gap: "6px",
                   alignItems: "center"
                 }}
               >
@@ -782,18 +712,18 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
                   toggleTag(tag);
                 }}
                 style={{
-                  padding: "6px 16px",
+                  padding: "4px 10px",
                   backgroundColor: getIndustryColor(tag),
                   color: "#000000",
-                  borderRadius: "16px",
-                  fontSize: "14px",
+                  borderRadius: "12px",
+                  fontSize: "11px",
                   fontWeight: "600",
                   textTransform: "uppercase",
-                  letterSpacing: "0.5px",
+                  letterSpacing: "0.3px",
                   cursor: "pointer",
                   // Highlight selected tags with a border
-                  border: selectedTags.includes(tag) ? "2px solid var(--text-primary)" : "2px solid transparent",
-                  boxShadow: selectedTags.includes(tag) ? "0 0 0 2px rgba(255,255,255,0.3)" : "none",
+                  border: selectedTags.includes(tag) ? "1px solid var(--text-primary)" : "1px solid transparent",
+                  boxShadow: selectedTags.includes(tag) ? "0 0 0 1px rgba(255,255,255,0.3)" : "none",
                   transition: "all 0.2s ease"
                 }}
               >
@@ -812,9 +742,10 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
                   ease: [0.25, 0.46, 0.45, 0.94]
                 }}
                 style={{
-                  fontSize: "14px",
+                  fontSize: "11px",
                   color: "var(--text-primary)",
-                  fontWeight: "500"
+                  fontWeight: "500",
+                  opacity: 0.8
                 }}
               >
                 {company.location}
@@ -835,7 +766,7 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
               style={{
                 textAlign: "right",
                 flexShrink: 0,
-                minWidth: "120px"
+                minWidth: "90px"
               }}
             >
             <motion.div 
@@ -847,11 +778,11 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
                 ease: [0.25, 0.46, 0.45, 0.94]
               }}
               style={{
-                fontSize: "14px",
+                fontSize: "12px",
                 color: "var(--text-primary)",
-                marginBottom: "4px",
+                marginBottom: "2px",
                 textTransform: "uppercase",
-                letterSpacing: "0.5px",
+                letterSpacing: "0.3px",
                 fontWeight: "600"
               }}
             >
@@ -866,8 +797,9 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
                 ease: [0.25, 0.46, 0.45, 0.94]
               }}
               style={{
-                fontSize: "12px",
-                color: "var(--text-primary)"
+                fontSize: "10px",
+                color: "var(--text-primary)",
+                opacity: 0.7
               }}
             >
               {company.location || "Detroit"}
@@ -883,7 +815,7 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
             transition={{ duration: 0.5 }}
             style={{
               textAlign: "center",
-              padding: "80px 20px",
+              padding: "40px 20px",
               color: "var(--text-primary)"
             }}
           >
@@ -913,7 +845,7 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
         {companies.length === 0 && (
           <div style={{
             textAlign: "center",
-            padding: "80px 20px",
+            padding: "40px 20px",
             color: "var(--text-primary)"
           }}>
             <p style={{ fontSize: "18px", margin: "0" }}>
@@ -921,6 +853,73 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
             </p>
           </div>
         )}
+      </div>
+      
+      {/* Tag Filter Section - Fixed at the bottom */}
+      <div className="tag-filter-container">
+        <h3
+          style={{
+            fontSize: "16px",
+            fontWeight: "700",
+            color: "var(--text-primary)",
+            marginBottom: "8px",
+            textAlign: "center",
+            fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif"
+          }}
+        >
+          Filter by Industry
+        </h3>
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "6px",
+          maxWidth: "100%"
+        }}>
+          {/* Clear Filters Button - Only visible when filters are active */}
+          {selectedTags.length > 0 && (
+            <button
+              onClick={() => setSelectedTags([])}
+              style={{
+                padding: "12px 24px",
+                backgroundColor: "var(--accent-red)",
+                color: "white",
+                border: "2px solid var(--accent-red)",
+                borderRadius: "30px",
+                cursor: "pointer",
+                fontSize: "16px",
+                fontWeight: "700",
+                fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
+                boxShadow: "0 4px 16px rgba(255,0,0,0.3)",
+                minWidth: "140px",
+                flexShrink: 0
+              }}
+            >
+              Clear All
+            </button>
+          )}
+
+          {/* Dynamic Tag Filter Pills */}
+          <div className="tag-list">
+            {availableTags.map((tag) => (
+            <button
+              key={tag}
+              className="tag-button"
+              onClick={() => toggleTag(tag)}
+              style={{
+                backgroundColor: selectedTags.includes(tag) ? getIndustryColor(tag) : "var(--bg-card)",
+                color: selectedTags.includes(tag) ? "#000000" : "var(--text-primary)",
+                border: `2px solid ${selectedTags.includes(tag) ? getIndustryColor(tag) : "var(--border)"}`,
+                boxShadow: selectedTags.includes(tag) ? "0 4px 12px rgba(0,0,0,0.2)" : "none"
+              }}
+            >
+              {tag}
+            </button>
+          ))}
+          </div>
+        </div>
       </div>
     </motion.div>
   );

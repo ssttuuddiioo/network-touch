@@ -23,7 +23,28 @@ export function CompanyDetail() {
   const [navigationDirection, setNavigationDirection] = React.useState(null);
   const [timeRemaining, setTimeRemaining] = React.useState(120); // 120 seconds = 2 minutes
 
-  const company = companies.find(c => c.id === id);
+  // Find company by ID or by partial name match
+  const findCompanyByIdOrName = (companies, searchId) => {
+    // First try exact ID match
+    const exactMatch = companies.find(c => c.id === searchId);
+    if (exactMatch) return exactMatch;
+    
+    // If no exact match, try to find by partial name match
+    const searchTerm = searchId.toLowerCase();
+    const partialMatch = companies.find(c => 
+      c.name.toLowerCase().includes(searchTerm) || 
+      searchTerm.includes(c.name.toLowerCase())
+    );
+    
+    // If partial match found, log it for debugging
+    if (partialMatch) {
+      console.log(`Found company "${partialMatch.name}" by partial match with search term "${searchId}"`);
+    }
+    
+    return partialMatch;
+  };
+  
+  const company = findCompanyByIdOrName(companies, id);
 
   const handleExploreLocation = () => {
     if (company && company.newlabLocation) {
@@ -33,7 +54,7 @@ export function CompanyDetail() {
   };
 
   // Navigation functions for company browsing
-  const currentIndex = companies.findIndex(c => c.id === id);
+  const currentIndex = company ? companies.findIndex(c => c.id === company.id) : -1;
   const canNavigatePrev = currentIndex > 0;
   const canNavigateNext = currentIndex < companies.length - 1;
 
@@ -61,6 +82,16 @@ export function CompanyDetail() {
         const csvCompanies = await loadCompaniesFromCSV();
         setCompanies(csvCompanies);
         console.log('Loaded companies in CompanyDetail:', csvCompanies.length);
+        
+        // Check if we need to redirect to the correct company URL
+        if (csvCompanies.length > 0) {
+          const foundCompany = findCompanyByIdOrName(csvCompanies, id);
+          if (foundCompany && foundCompany.id !== id) {
+            // Redirect to the correct URL with the proper ID
+            console.log(`Redirecting from "${id}" to proper company ID "${foundCompany.id}"`);
+            navigate(`/company/${foundCompany.id}`, { replace: true });
+          }
+        }
       } catch (error) {
         console.error('Failed to load companies:', error);
         setCompanies([]);
@@ -78,7 +109,7 @@ export function CompanyDetail() {
     });
 
     return unsubscribe;
-  }, []);
+  }, [id, navigate]);
 
   // Check if we should use emoji for the logo
   React.useEffect(() => {

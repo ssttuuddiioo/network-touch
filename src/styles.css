@@ -236,3 +236,130 @@ input::placeholder, textarea::placeholder {
   transform: translateY(-2px);
   box-shadow: 0 8px 32px var(--shadow);
 }
+
+/* Tag filter container positioned 300px from bottom and centered - accommodates 3 rows */
+.tag-filter-container {
+  position: fixed;
+  bottom: 100px; /* Raised 300px from bottom */
+  left: 50%; /* Position from center */
+  transform: translateX(-50%); /* Center horizontally */
+  width: 85%; /* Slightly wider to fit more tags per row */
+  max-width: 1400px; /* Increased maximum width */
+  height: auto; /* Auto height based on content */
+  max-height: 230px; /* Increased to fit 3 rows + header */
+  background-color: rgba(18, 18, 18, 0.8); /* Reduced opacity by 15% (from 0.95 to 0.8) */
+  backdrop-filter: blur(10px);
+  padding: 12px 24px 24px 24px; /* Slightly reduced padding */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 -4px 20px rgba(0, 0, 0, 0.3); /* Shadow on both top and bottom */
+  z-index: 1000;
+  border: 1px solid var(--border); /* Border on all sides */
+  border-radius: 16px; /* Rounded corners on all sides */
+  overflow-y: auto; /* Allow scrolling if needed */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* Three-row tag list */
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px; /* Reduced gap to fit more tags */
+  padding: 5px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  justify-content: center;
+  align-content: flex-start;
+  max-width: 1400px;
+  margin: 0 auto;
+  max-height: 180px; /* Increased to fit 3 rows */
+  overflow-y: auto; /* Allow vertical scrolling if needed */
+  margin-bottom: 5px; /* Reduced space below the tags */
+}
+
+.tag-list::-webkit-scrollbar {
+  display: none;
+}
+
+/* Compact tag buttons for touch screens (fit in 3 rows) */
+.tag-button {
+  padding: 10px 16px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  min-height: 46px;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 90px;
+  max-width: 180px; /* Limit maximum width */
+  text-align: center;
+}
+
+/* Add hover effect without animation */
+.tag-button:hover {
+  transform: scale(1.05);
+}
+
+.tag-button:active {
+  transform: scale(0.95);
+}
+
+/* Responsive adjustments for tag container */
+@media (max-width: 768px) {
+  .tag-filter-container {
+    padding: 8px 10px 16px 10px;
+    max-height: 250px; /* Allow more height on mobile for multiple rows */
+    bottom: 200px; /* Adjusted for smaller screens but still raised */
+    border-radius: 12px;
+    width: 95%;
+    max-width: 600px;
+  }
+  
+  .tag-button {
+    padding: 6px 10px;
+    font-size: 12px;
+    min-height: 38px;
+    min-width: 80px;
+    letter-spacing: 0.2px;
+  }
+  
+  .tag-list {
+    gap: 6px;
+    max-height: 220px;
+  }
+}
+
+/* For very large screens */
+@media (min-width: 1600px) {
+  .tag-filter-container {
+    max-height: 250px;
+    bottom: 300px; /* Maintain 300px from bottom */
+    border-radius: 20px;
+    padding: 16px 30px 30px 30px;
+    width: 70%;
+    max-width: 1800px;
+  }
+  
+  .tag-button {
+    padding: 12px 20px;
+    font-size: 16px;
+    min-height: 54px;
+    min-width: 100px;
+  }
+  
+  .tag-list {
+    gap: 10px;
+    max-height: 190px;
+  }
+}
+
+/* Extra padding at the bottom to prevent tag filter from blocking last companies */
+.company-grid-container {
+  padding-bottom: 300px !important; /* Added 200px more padding (300px total) */
+}
