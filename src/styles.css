@@ -237,69 +237,71 @@ input::placeholder, textarea::placeholder {
   box-shadow: 0 8px 32px var(--shadow);
 }
 
-/* Tag filter container positioned at the bottom of the screen */
+/* Optimized tag filter container with more space for tags */
 .tag-filter-container {
   position: fixed;
-  bottom: 0; /* Positioned at the very bottom */
-  left: 0; /* Full width from left edge */
-  right: 0; /* Full width to right edge */
-  width: 100%; /* Full width */
-  transform: none; /* No transform needed */
-  max-width: none; /* No max width */
+  bottom: 100px; /* Raised 300px from bottom */
+  left: 50%; /* Position from center */
+  transform: translateX(-50%); /* Center horizontally */
+  width: 92%; /* Wider to fit more tags per row */
+  max-width: 1800px; /* Increased maximum width */
   height: auto; /* Auto height based on content */
-  max-height: 200px; /* Adjusted for smaller buttons */
-  background-color: rgba(18, 18, 18, 0.9); /* Increased opacity for better contrast */
+  max-height: 220px; /* Increased height since header was removed */
+  background-color: rgba(18, 18, 18, 0.8); /* Reduced opacity by 15% (from 0.95 to 0.8) */
   backdrop-filter: blur(10px);
-  padding: 8px 20px 16px 20px; /* Reduced padding */
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3); /* Shadow only on top */
+  padding: 12px 16px; /* Simplified padding */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 -4px 20px rgba(0, 0, 0, 0.3); /* Shadow on both top and bottom */
   z-index: 1000;
-  border-top: 1px solid var(--border); /* Border only on top */
-  border-radius: 0; /* No rounded corners */
+  border: 1px solid var(--border); /* Border on all sides */
+  border-radius: 16px; /* Rounded corners on all sides */
   overflow-y: auto; /* Allow scrolling if needed */
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center; /* Center content vertically */
 }
 
-/* Compact tag list for all tags to fit */
+/* Optimized tag list to fill available space */
 .tag-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px; /* Further reduced gap to fit more tags */
-  padding: 5px;
+  gap: 5px; /* Further reduced gap to fit more tags */
+  padding: 4px;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   -ms-overflow-style: none;
   justify-content: center;
-  align-content: flex-start;
-  max-width: 1400px;
+  align-content: center; /* Center content vertically */
+  max-width: 1700px;
   margin: 0 auto;
-  max-height: 160px; /* Adjusted for smaller buttons */
+  max-height: 200px; /* Increased height since header was removed */
   overflow-y: auto; /* Allow vertical scrolling if needed */
-  margin-bottom: 5px; /* Reduced space below the tags */
+  width: 100%; /* Use full width */
 }
 
 .tag-list::-webkit-scrollbar {
   display: none;
 }
 
-/* Smaller tag buttons to ensure all fit in the component */
+/* Dynamic tag buttons that scale to fit the container */
 .tag-button {
-  padding: 8px 12px;
+  padding: 0.5vw 0.8vw;
   border-radius: 20px;
   cursor: pointer;
-  font-size: 11px; /* Decreased by ~15% from 13px */
+  font-size: clamp(9px, 0.8vw, 13px); /* Dynamic font size with min/max limits */
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.2px;
-  min-height: 38px;
-  margin-bottom: 3px;
+  min-height: 32px;
+  margin-bottom: 2px;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 80px;
-  max-width: 150px; /* Reduced maximum width */
+  min-width: 70px;
+  max-width: 140px; /* Further reduced maximum width */
   text-align: center;
+  white-space: nowrap; /* Prevent text wrapping inside buttons */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Add ellipsis for text that doesn't fit */
 }
 
 /* Add hover effect without animation */
@@ -314,49 +316,49 @@ input::placeholder, textarea::placeholder {
 /* Responsive adjustments for tag container */
 @media (max-width: 768px) {
   .tag-filter-container {
-    padding: 6px 8px 12px 8px;
-    max-height: 180px; /* Reduced height on mobile */
-    bottom: 0; /* At the bottom */
-    border-radius: 0;
-    width: 100%;
-    max-width: none;
+    padding: 8px;
+    max-height: 200px;
+    bottom: 200px; /* Adjusted for smaller screens but still raised */
+    border-radius: 12px;
+    width: 96%;
+    max-width: 600px;
   }
   
   .tag-button {
-    padding: 5px 8px;
-    font-size: 9px; /* Decreased by ~15% from 11px */
-    min-height: 32px;
-    min-width: 70px;
+    padding: 0.6vw 1vw;
+    font-size: clamp(8px, 1vw, 10px); /* Dynamic font size with smaller min/max */
+    min-height: 28px;
+    min-width: 60px;
     letter-spacing: 0.1px;
   }
   
   .tag-list {
     gap: 4px;
-    max-height: 160px;
+    max-height: 180px;
   }
 }
 
 /* For very large screens */
 @media (min-width: 1600px) {
   .tag-filter-container {
-    max-height: 220px;
-    bottom: 0; /* At the bottom */
-    border-radius: 0;
-    padding: 12px 24px 20px 24px;
-    width: 100%;
-    max-width: none;
+    max-height: 240px;
+    bottom: 300px; /* Maintain 300px from bottom */
+    border-radius: 20px;
+    padding: 16px;
+    width: 85%;
+    max-width: 2200px;
   }
   
   .tag-button {
-    padding: 10px 16px;
-    font-size: 12px; /* Decreased by ~15% from 14px */
-    min-height: 44px;
-    min-width: 90px;
+    padding: 0.4vw 0.7vw;
+    font-size: clamp(10px, 0.7vw, 14px); /* Dynamic font size with larger min/max */
+    min-height: 40px;
+    min-width: 80px;
   }
   
   .tag-list {
     gap: 8px;
-    max-height: 170px;
+    max-height: 210px;
   }
 }
 

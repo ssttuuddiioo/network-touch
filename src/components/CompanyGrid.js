@@ -857,18 +857,7 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
       
       {/* Tag Filter Section - Fixed at the bottom */}
       <div className="tag-filter-container">
-        <h3
-          style={{
-            fontSize: "16px",
-            fontWeight: "700",
-            color: "var(--text-primary)",
-            marginBottom: "8px",
-            textAlign: "center",
-            fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif"
-          }}
-        >
-          Filter by Industry
-        </h3>
+        {/* Removed "Filter by Industry" header to allow more space for tags */}
         <div style={{
           display: "flex",
           flexDirection: "column",
