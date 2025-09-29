@@ -237,19 +237,19 @@ input::placeholder, textarea::placeholder {
   box-shadow: 0 8px 32px var(--shadow);
 }
 
-/* Tag filter container positioned 300px from bottom and centered - accommodates 3 rows */
+/* Compact tag filter container to fit all tags */
 .tag-filter-container {
   position: fixed;
   bottom: 100px; /* Raised 300px from bottom */
   left: 50%; /* Position from center */
   transform: translateX(-50%); /* Center horizontally */
-  width: 85%; /* Slightly wider to fit more tags per row */
-  max-width: 1400px; /* Increased maximum width */
+  width: 90%; /* Wider to fit more tags per row */
+  max-width: 1600px; /* Increased maximum width */
   height: auto; /* Auto height based on content */
-  max-height: 230px; /* Increased to fit 3 rows + header */
+  max-height: 200px; /* Adjusted for smaller buttons */
   background-color: rgba(18, 18, 18, 0.8); /* Reduced opacity by 15% (from 0.95 to 0.8) */
   backdrop-filter: blur(10px);
-  padding: 12px 24px 24px 24px; /* Slightly reduced padding */
+  padding: 8px 20px 16px 20px; /* Reduced padding */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 -4px 20px rgba(0, 0, 0, 0.3); /* Shadow on both top and bottom */
   z-index: 1000;
   border: 1px solid var(--border); /* Border on all sides */
@@ -260,11 +260,11 @@ input::placeholder, textarea::placeholder {
   justify-content: flex-start;
 }
 
-/* Three-row tag list */
+/* Compact tag list for all tags to fit */
 .tag-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px; /* Reduced gap to fit more tags */
+  gap: 6px; /* Further reduced gap to fit more tags */
   padding: 5px;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -273,7 +273,7 @@ input::placeholder, textarea::placeholder {
   align-content: flex-start;
   max-width: 1400px;
   margin: 0 auto;
-  max-height: 180px; /* Increased to fit 3 rows */
+  max-height: 160px; /* Adjusted for smaller buttons */
   overflow-y: auto; /* Allow vertical scrolling if needed */
   margin-bottom: 5px; /* Reduced space below the tags */
 }
@@ -282,22 +282,22 @@ input::placeholder, textarea::placeholder {
   display: none;
 }
 
-/* Compact tag buttons for touch screens (fit in 3 rows) */
+/* Smaller tag buttons to ensure all fit in the component */
 .tag-button {
-  padding: 10px 16px;
-  border-radius: 25px;
+  padding: 8px 12px;
+  border-radius: 20px;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
-  min-height: 46px;
-  margin-bottom: 4px;
+  letter-spacing: 0.2px;
+  min-height: 38px;
+  margin-bottom: 3px;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 90px;
-  max-width: 180px; /* Limit maximum width */
+  min-width: 80px;
+  max-width: 150px; /* Reduced maximum width */
   text-align: center;
 }
 
@@ -313,8 +313,8 @@ input::placeholder, textarea::placeholder {
 /* Responsive adjustments for tag container */
 @media (max-width: 768px) {
   .tag-filter-container {
-    padding: 8px 10px 16px 10px;
-    max-height: 250px; /* Allow more height on mobile for multiple rows */
+    padding: 6px 8px 12px 8px;
+    max-height: 220px; /* Allow more height on mobile for multiple rows */
     bottom: 200px; /* Adjusted for smaller screens but still raised */
     border-radius: 12px;
     width: 95%;
@@ -322,40 +322,40 @@ input::placeholder, textarea::placeholder {
   }
   
   .tag-button {
-    padding: 6px 10px;
-    font-size: 12px;
-    min-height: 38px;
-    min-width: 80px;
-    letter-spacing: 0.2px;
+    padding: 5px 8px;
+    font-size: 11px;
+    min-height: 32px;
+    min-width: 70px;
+    letter-spacing: 0.1px;
   }
   
   .tag-list {
-    gap: 6px;
-    max-height: 220px;
+    gap: 4px;
+    max-height: 200px;
   }
 }
 
 /* For very large screens */
 @media (min-width: 1600px) {
   .tag-filter-container {
-    max-height: 250px;
+    max-height: 220px;
     bottom: 300px; /* Maintain 300px from bottom */
     border-radius: 20px;
-    padding: 16px 30px 30px 30px;
-    width: 70%;
-    max-width: 1800px;
+    padding: 12px 24px 20px 24px;
+    width: 80%;
+    max-width: 2000px;
   }
   
   .tag-button {
-    padding: 12px 20px;
-    font-size: 16px;
-    min-height: 54px;
-    min-width: 100px;
+    padding: 10px 16px;
+    font-size: 14px;
+    min-height: 44px;
+    min-width: 90px;
   }
   
   .tag-list {
-    gap: 10px;
-    max-height: 190px;
+    gap: 8px;
+    max-height: 170px;
   }
 }
 
