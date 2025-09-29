@@ -287,7 +287,7 @@ input::placeholder, textarea::placeholder {
   padding: 8px 12px;
   border-radius: 20px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 11px; /* Decreased by ~15% from 13px */
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.2px;
@@ -323,7 +323,7 @@ input::placeholder, textarea::placeholder {
   
   .tag-button {
     padding: 5px 8px;
-    font-size: 11px;
+    font-size: 9px; /* Decreased by ~15% from 11px */
     min-height: 32px;
     min-width: 70px;
     letter-spacing: 0.1px;
@@ -348,7 +348,7 @@ input::placeholder, textarea::placeholder {
   
   .tag-button {
     padding: 10px 16px;
-    font-size: 14px;
+    font-size: 12px; /* Decreased by ~15% from 14px */
     min-height: 44px;
     min-width: 90px;
   }
