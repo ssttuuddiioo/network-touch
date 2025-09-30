@@ -284,20 +284,20 @@ input::placeholder, textarea::placeholder {
 
 /* Dynamic tag buttons that scale to fit the container */
 .tag-button {
-  padding: 0.5vw 0.8vw;
-  border-radius: 20px;
+  padding: 0.75vw 1.2vw;
+  border-radius: 30px;
   cursor: pointer;
-  font-size: clamp(9px, 0.8vw, 13px); /* Dynamic font size with min/max limits */
+  font-size: clamp(13.5px, 1.2vw, 19.5px); /* Dynamic font size with min/max limits (1.5x) */
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.2px;
-  min-height: 32px;
-  margin-bottom: 2px;
+  letter-spacing: 0.3px;
+  min-height: 48px; /* 1.5x of 32px */
+  margin-bottom: 3px;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 70px;
-  max-width: 140px; /* Further reduced maximum width */
+  min-width: 105px; /* 1.5x of 70px */
+  max-width: 210px; /* 1.5x of 140px */
   text-align: center;
   white-space: nowrap; /* Prevent text wrapping inside buttons */
   overflow: hidden;
