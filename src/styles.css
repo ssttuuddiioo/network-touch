@@ -285,20 +285,20 @@ input::placeholder, textarea::placeholder {
 
 /* Dynamic tag buttons that scale to fit the container */
 .tag-button {
-  padding: 0.75vw 1.2vw;
-  border-radius: 30px;
+  padding: 0.65vw 1.04vw;
+  border-radius: 26px;
   cursor: pointer;
-  font-size: clamp(13.5px, 1.2vw, 19.5px); /* Dynamic font size with min/max limits (1.5x) */
+  font-size: clamp(11.7px, 1.04vw, 16.9px); /* Dynamic font size with min/max limits (1.3x) */
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
-  min-height: 48px; /* 1.5x of 32px */
+  letter-spacing: 0.26px;
+  min-height: 42px; /* 1.3x of 32px */
   margin-bottom: 3px;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 105px; /* 1.5x of 70px */
-  max-width: 210px; /* 1.5x of 140px */
+  min-width: 91px; /* 1.3x of 70px */
+  max-width: 182px; /* 1.3x of 140px */
   text-align: center;
   white-space: nowrap; /* Prevent text wrapping inside buttons */
   overflow: hidden;
@@ -326,11 +326,11 @@ input::placeholder, textarea::placeholder {
   }
   
   .tag-button {
-    padding: 0.9vw 1.5vw; /* 1.5x scaling */
-    font-size: clamp(12px, 1.5vw, 15px); /* 1.5x scaling */
-    min-height: 42px; /* 1.5x scaling */
-    min-width: 90px; /* 1.5x scaling */
-    letter-spacing: 0.15px;
+    padding: 0.78vw 1.3vw; /* 1.3x scaling */
+    font-size: clamp(10.4px, 1.3vw, 13px); /* 1.3x scaling */
+    min-height: 36px; /* 1.3x scaling */
+    min-width: 78px; /* 1.3x scaling */
+    letter-spacing: 0.13px;
   }
   
   .tag-list {
@@ -351,10 +351,10 @@ input::placeholder, textarea::placeholder {
   }
   
   .tag-button {
-    padding: 0.6vw 1.05vw; /* 1.5x scaling */
-    font-size: clamp(15px, 1.05vw, 21px); /* 1.5x scaling */
-    min-height: 60px; /* 1.5x scaling */
-    min-width: 120px; /* 1.5x scaling */
+    padding: 0.52vw 0.91vw; /* 1.3x scaling */
+    font-size: clamp(13px, 0.91vw, 18.2px); /* 1.3x scaling */
+    min-height: 52px; /* 1.3x scaling */
+    min-width: 104px; /* 1.3x scaling */
   }
   
   .tag-list {
