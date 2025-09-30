@@ -144,11 +144,39 @@ export function CompanyGrid() {
     }
   };
 
+  // Normalize tag names to consolidate variants (matches dataStorage.js normalization)
+  const normalizeTag = (tag) => {
+    const trimmed = tag.trim();
+    const normalized = trimmed.toUpperCase();
+    
+    // Map to canonical names (must match dataStorage.js)
+    if (normalized === 'FOUNDING PARTNER' || normalized === 'FOUNDING PARTNER,') {
+      return 'Founding Partner';
+    }
+    if (normalized === 'CORPORATE PARTNER' || normalized.includes('CORPORATE PA')) {
+      return 'Corporate Partner';
+    }
+    if (normalized === 'GOVERNMENT') {
+      return 'Government';
+    }
+    if (normalized === 'INNOVATION COMMUNITY') {
+      return 'Innovation Community';
+    }
+    
+    // Return properly capitalized for other tags
+    return trimmed.split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  };
+
   // Get all unique industries for filter
   const allIndustries = useMemo(() => {
     const industries = new Set();
     companies.forEach(company => {
-      company.industry.forEach(ind => industries.add(ind));
+      company.industry.forEach(ind => {
+        const normalized = normalizeTag(ind);
+        industries.add(normalized);
+      });
     });
     return Array.from(industries).sort();
   }, [companies]);

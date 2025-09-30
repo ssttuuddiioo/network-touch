@@ -144,22 +144,59 @@ export const loadCompaniesFromStorage = async () => {
       return loadCompaniesFromLocalStorage();
     }
 
+    // Normalize individual tags to canonical format (same as stakeholders)
+    const normalizeTag = (tag) => {
+      const trimmed = tag.trim();
+      const normalized = trimmed.toUpperCase();
+      
+      // Map to canonical names
+      if (normalized === 'FOUNDING PARTNER' || normalized === 'FOUNDING PARTNER,') {
+        return 'Founding Partner';
+      }
+      if (normalized === 'CORPORATE PARTNER' || normalized.includes('CORPORATE PA')) {
+        return 'Corporate Partner';
+      }
+      if (normalized === 'GOVERNMENT') {
+        return 'Government';
+      }
+      if (normalized === 'INNOVATION COMMUNITY') {
+        return 'Innovation Community';
+      }
+      
+      // Return properly capitalized for other tags
+      return trimmed.split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+    };
+
     // Convert Supabase format back to app format
-    const companies = data.map(company => ({
-      id: (company.id != null ? String(company.id) : company.name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')),
-      name: company.name,
-      logo: company.logo,
-      images: company.images || [],
-      headerImage: company.header_image,
-      tagline: company.tagline,
-      description: company.description,
-      detroitStory: company.detroit_story,
-      funding: company.funding,
-      industry: company.industry || [],
-      website: company.website,
-      updated_at: company.updated_at,
-      updatedAt: company.updated_at
-    }));
+    const companies = data.map(company => {
+      // Normalize industry array
+      const rawIndustry = company.industry || [];
+      const normalizedIndustry = Array.from(new Set(
+        rawIndustry
+          .flatMap(ind => ind.split(','))  // Split comma-separated values
+          .map(s => s.trim())
+          .filter(Boolean)
+          .map(normalizeTag)
+      ));
+
+      return {
+        id: (company.id != null ? String(company.id) : company.name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')),
+        name: company.name,
+        logo: company.logo,
+        images: company.images || [],
+        headerImage: company.header_image,
+        tagline: company.tagline,
+        description: company.description,
+        detroitStory: company.detroit_story,
+        funding: company.funding,
+        industry: normalizedIndustry,
+        website: company.website,
+        updated_at: company.updated_at,
+        updatedAt: company.updated_at
+      };
+    });
 
     console.log('Loaded', companies.length, 'companies from Supabase');
     return companies;
@@ -195,10 +232,36 @@ export const loadStakeholdersFromStorage = async () => {
         .replace(/-+/g, '-')
         .replace(/^-|-$/g, '');
 
+      // Normalize individual tags to canonical format
+      const normalizeTag = (tag) => {
+        const trimmed = tag.trim();
+        const normalized = trimmed.toUpperCase();
+        
+        // Map to canonical names
+        if (normalized === 'FOUNDING PARTNER' || normalized === 'FOUNDING PARTNER,') {
+          return 'Founding Partner';
+        }
+        if (normalized === 'CORPORATE PARTNER' || normalized.includes('CORPORATE PA')) {
+          return 'Corporate Partner';
+        }
+        if (normalized === 'GOVERNMENT') {
+          return 'Government';
+        }
+        if (normalized === 'INNOVATION COMMUNITY') {
+          return 'Innovation Community';
+        }
+        
+        // Return properly capitalized for other tags
+        return trimmed.split(' ')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+          .join(' ');
+      };
+
       const categoryList = (row.category || '')
         .split(',')
         .map(s => s && s.trim())
-        .filter(Boolean);
+        .filter(Boolean)
+        .map(normalizeTag);
 
       const baseIndustry = Array.isArray(row.industry) ? row.industry : categoryList;
       const baseTags = Array.isArray(row.tags) ? row.tags : [];
@@ -209,14 +272,14 @@ export const loadStakeholdersFromStorage = async () => {
         : (headerImage ? [headerImage] : []);
 
       const tags = Array.from(new Set([
-        ...baseTags,
+        ...baseTags.map(normalizeTag),
         ...categoryList,
-        row.status || '',
+        row.status ? normalizeTag(row.status) : '',
         'Stakeholder'
       ].filter(Boolean)));
 
       const industry = Array.from(new Set([
-        ...baseIndustry,
+        ...baseIndustry.map(normalizeTag),
         'Stakeholder'
       ].filter(Boolean)));
 
