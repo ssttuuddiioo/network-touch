@@ -246,8 +246,8 @@ input::placeholder, textarea::placeholder {
   width: 100%; /* Full width */
   max-width: none; /* Remove max-width */
   height: auto; /* Auto height based on content */
-  max-height: 40vh; /* Keep within viewport and always visible */
-  padding: 24px 16px 50px 16px; /* 50px bottom padding */
+  max-height: 50vh; /* Increased to fit CTA + tags without scrolling */
+  padding: 16px 16px 24px 16px; /* Reduced top/bottom padding */
   background-color: #000000; /* Solid black background */
   backdrop-filter: blur(10px);
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5); /* Shadow only on top */
@@ -258,23 +258,24 @@ input::placeholder, textarea::placeholder {
   display: flex;
   flex-direction: column;
   justify-content: flex-start; /* Align content to top */
+  gap: 8px; /* Space between CTA and tags */
 }
 
 /* Optimized tag list to fill available space */
 .tag-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px; /* Further reduced gap to fit more tags */
+  gap: 8px; /* Increased gap for larger tags */
   padding: 4px;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   -ms-overflow-style: none;
   justify-content: center;
-  align-content: center; /* Center content vertically */
+  align-content: flex-start; /* Align content to top */
   max-width: 1700px;
   margin: 0 auto;
-  max-height: 200px; /* Increased height since header was removed */
-  overflow-y: auto; /* Allow vertical scrolling if needed */
+  max-height: none; /* Remove height limit, let it flow */
+  overflow-y: visible; /* No scrolling */
   width: 100%; /* Use full width */
 }
 
@@ -316,8 +317,8 @@ input::placeholder, textarea::placeholder {
 /* Responsive adjustments for tag container */
 @media (max-width: 768px) {
   .tag-filter-container {
-    padding: 12px 12px 24px 12px;
-    max-height: 45vh; /* Use more of the viewport on mobile */
+    padding: 12px 12px 20px 12px;
+    max-height: 55vh; /* Use more viewport on mobile */
     bottom: 0; /* Keep pinned to bottom */
     border-radius: 0; /* Full-width bar */
     width: 100%;
@@ -325,40 +326,40 @@ input::placeholder, textarea::placeholder {
   }
   
   .tag-button {
-    padding: 0.6vw 1vw;
-    font-size: clamp(8px, 1vw, 10px); /* Dynamic font size with smaller min/max */
-    min-height: 28px;
-    min-width: 60px;
-    letter-spacing: 0.1px;
+    padding: 0.9vw 1.5vw; /* 1.5x scaling */
+    font-size: clamp(12px, 1.5vw, 15px); /* 1.5x scaling */
+    min-height: 42px; /* 1.5x scaling */
+    min-width: 90px; /* 1.5x scaling */
+    letter-spacing: 0.15px;
   }
   
   .tag-list {
-    gap: 4px;
-    max-height: 180px;
+    gap: 6px;
+    max-height: none; /* No height limit */
   }
 }
 
 /* For very large screens */
 @media (min-width: 1600px) {
   .tag-filter-container {
-    max-height: 35vh;
+    max-height: 45vh; /* Increased for larger tags */
     bottom: 0; /* Keep pinned to bottom */
     border-radius: 0;
-    padding: 24px 16px 50px 16px;
+    padding: 20px 16px 32px 16px;
     width: 100%;
     max-width: none;
   }
   
   .tag-button {
-    padding: 0.4vw 0.7vw;
-    font-size: clamp(10px, 0.7vw, 14px); /* Dynamic font size with larger min/max */
-    min-height: 40px;
-    min-width: 80px;
+    padding: 0.6vw 1.05vw; /* 1.5x scaling */
+    font-size: clamp(15px, 1.05vw, 21px); /* 1.5x scaling */
+    min-height: 60px; /* 1.5x scaling */
+    min-width: 120px; /* 1.5x scaling */
   }
   
   .tag-list {
-    gap: 8px;
-    max-height: 210px;
+    gap: 10px;
+    max-height: none; /* No height limit */
   }
 }
 
