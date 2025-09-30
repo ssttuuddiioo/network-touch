@@ -1,7 +1,7 @@
 // Centralized data storage for company information
 // Uses Supabase for persistent cloud storage with real-time updates
 
-import { supabase, COMPANIES_TABLE, isSupabaseConfigured } from '../config/supabase';
+import { supabase, COMPANIES_TABLE, STAKEHOLDERS_TABLE, isSupabaseConfigured } from '../config/supabase';
 
 // Fallback to localStorage if Supabase is not configured
 const STORAGE_KEY = 'admin_companies';
@@ -146,7 +146,7 @@ export const loadCompaniesFromStorage = async () => {
 
     // Convert Supabase format back to app format
     const companies = data.map(company => ({
-      id: company.id || company.name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, ''),
+      id: (company.id != null ? String(company.id) : company.name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')),
       name: company.name,
       logo: company.logo,
       images: company.images || [],
@@ -156,7 +156,9 @@ export const loadCompaniesFromStorage = async () => {
       detroitStory: company.detroit_story,
       funding: company.funding,
       industry: company.industry || [],
-      website: company.website
+      website: company.website,
+      updated_at: company.updated_at,
+      updatedAt: company.updated_at
     }));
 
     console.log('Loaded', companies.length, 'companies from Supabase');
@@ -165,6 +167,82 @@ export const loadCompaniesFromStorage = async () => {
     console.error('Failed to load companies from Supabase:', error);
     // Fallback to localStorage
     return loadCompaniesFromLocalStorage();
+  }
+};
+
+// Load stakeholders from Supabase
+export const loadStakeholdersFromStorage = async () => {
+  if (!isSupabaseConfigured()) {
+    return null; // Caller can decide a CSV fallback
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from(STAKEHOLDERS_TABLE)
+      .select('*')
+      .order('company');
+
+    if (error) {
+      console.error('Error loading stakeholders from Supabase:', error);
+      return null;
+    }
+
+    const stakeholders = data.map(row => {
+      const name = row.name || row.company || '';
+      const derivedId = name
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+
+      const categoryList = (row.category || '')
+        .split(',')
+        .map(s => s && s.trim())
+        .filter(Boolean);
+
+      const baseIndustry = Array.isArray(row.industry) ? row.industry : categoryList;
+      const baseTags = Array.isArray(row.tags) ? row.tags : [];
+
+      const headerImage = row.header_image || row.photo || '';
+      const images = Array.isArray(row.images) && row.images.length > 0
+        ? row.images
+        : (headerImage ? [headerImage] : []);
+
+      const tags = Array.from(new Set([
+        ...baseTags,
+        ...categoryList,
+        row.status || '',
+        'Stakeholder'
+      ].filter(Boolean)));
+
+      const industry = Array.from(new Set([
+        ...baseIndustry,
+        'Stakeholder'
+      ].filter(Boolean)));
+
+      return {
+        id: (row.id != null ? String(row.id) : derivedId),
+        name,
+        logo: row.logo || '',
+        images,
+        headerImage,
+        tagline: row.tagline || '',
+        description: row.description || '',
+        detroitStory: row.detroit_story || '',
+        funding: row.funding || '',
+        industry,
+        website: row.website || '#',
+        tags,
+        updated_at: row.updated_at,
+        updatedAt: row.updated_at
+      };
+    });
+
+    console.log('Loaded', stakeholders.length, 'stakeholders from Supabase');
+    return stakeholders;
+  } catch (error) {
+    console.error('Failed to load stakeholders from Supabase:', error);
+    return null;
   }
 };
 
@@ -286,14 +364,26 @@ export const getDataVersion = () => {
 export const subscribeToDataChanges = (callback) => {
   if (isSupabaseConfigured()) {
     // Subscribe to Supabase real-time changes
-    const subscription = supabase
+    const companiesChannel = supabase
       .channel('companies_changes')
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: COMPANIES_TABLE
       }, (payload) => {
-        console.log('Supabase real-time change:', payload);
+        console.log('Supabase real-time change (companies):', payload);
+        callback();
+      })
+      .subscribe();
+
+    const stakeholdersChannel = supabase
+      .channel('stakeholders_changes')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: STAKEHOLDERS_TABLE
+      }, (payload) => {
+        console.log('Supabase real-time change (stakeholders):', payload);
         callback();
       })
       .subscribe();
@@ -307,7 +397,8 @@ export const subscribeToDataChanges = (callback) => {
     
     // Return cleanup function
     return () => {
-      subscription.unsubscribe();
+      companiesChannel.unsubscribe();
+      stakeholdersChannel.unsubscribe();
       window.removeEventListener('supabase-data-change', handleCustomChange);
     };
   } else {

@@ -5,6 +5,23 @@ const CompanyImage = ({ company, imageType = 'logo', style, className }) => {
   const [imageSrc, setImageSrc] = useState(null);
   const [error, setError] = useState(false);
 
+  // Append a lightweight cache-busting param so updated URLs/images reflect immediately
+  const withCacheBuster = (url, key) => {
+    if (!url) return url;
+    const separator = url.includes('?') ? '&' : '?';
+    // Prefer an explicit key, then DB timestamps, then the URL itself (so when a URL changes, cache busts),
+    // and finally a time-based fallback.
+    const derivedFromType = imageType === 'logo' ? (company && company.logo) : (company && company.headerImage);
+    const cacheKey = key
+      || (company && (company.updatedAt || company.updated_at))
+      || derivedFromType
+      || '';
+    // Add a minute bucket so the QR param changes at least once a minute even if nothing else did
+    const minuteBucket = Math.floor(Date.now() / 60000);
+    const safeKey = encodeURIComponent(String(cacheKey || minuteBucket));
+    return `${url}${separator}v=${safeKey}`;
+  };
+
   useEffect(() => {
     // Reset state when company or imageType changes
     setImageSrc(null);
@@ -17,12 +34,16 @@ const CompanyImage = ({ company, imageType = 'logo', style, className }) => {
 
     // First check if we have a direct URL from Supabase
     if (imageType === 'logo' && company.logo && company.logo.trim() !== '') {
-        // Use logo URL from Supabase
-        setImageSrc(company.logo);
+        // Use logo URL from Supabase/external with cache-busting
+        const url = withCacheBuster(company.logo);
+        setImageSrc(url);
+        try { console.log(`[CompanyImage] Using logo URL for ${company.name}:`, url); } catch {}
         return;
     } else if (imageType === 'photo' && company.headerImage && company.headerImage.trim() !== '') {
-        // Use header image URL from Supabase
-        setImageSrc(company.headerImage);
+        // Use header image URL from Supabase/external with cache-busting
+        const url = withCacheBuster(company.headerImage);
+        setImageSrc(url);
+        try { console.log(`[CompanyImage] Using photo URL for ${company.name}:`, url); } catch {}
         return;
     }
 
@@ -72,6 +93,17 @@ const CompanyImage = ({ company, imageType = 'logo', style, className }) => {
   };
 
   if (error || !imageSrc) {
+    // Calculate font size safely
+    let fontSize = '24px';
+    if (style && style.height && typeof style.height === 'number') {
+      fontSize = `${style.height / 2}px`;
+    } else if (style && style.height && typeof style.height === 'string') {
+      const heightNum = parseInt(style.height);
+      if (!isNaN(heightNum)) {
+        fontSize = `${heightNum / 2}px`;
+      }
+    }
+
     return (
       <div
         style={{
@@ -80,7 +112,7 @@ const CompanyImage = ({ company, imageType = 'logo', style, className }) => {
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: 'var(--bg-secondary)',
-          fontSize: (style && style.height) ? style.height / 2 : '24px', // Estimate font size from height
+          fontSize: fontSize,
           userSelect: 'none'
         }}
         className={className}

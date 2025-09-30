@@ -469,13 +469,23 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
                   marginTop: "0"
                 }}
               >
-                {locationFilter ? `Company Directory in ${locationFilter}` : "MICHIGAN CENTRAL COMPANY DIRECTORY"}
-                {(selectedTags.length > 0 || locationFilter) && (
-                  <span style={{ fontSize: "18px", color: "var(--text-muted)", fontWeight: "400" }}>
-                    {" "}({filteredCompanies.length} of {companies.length})
-                  </span>
-                )}
+                THE MICHIGAN CENTRAL ECOSYSTEM
               </motion.h2>
+
+              {/* Subtitle */}
+              <div
+                style={{
+                  fontSize: "16px",
+                  lineHeight: "22px",
+                  color: "var(--text-muted)",
+                  fontWeight: 500,
+                  marginTop: "-8px",
+                  marginBottom: "8px",
+                  fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif"
+                }}
+              >
+                A directory of some of the members and partners here
+              </div>
 
               {/* Location Filter Indicator */}
               {locationFilter && (
@@ -857,6 +867,30 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
       
       {/* Tag Filter Section - Fixed at the bottom */}
       <div className="tag-filter-container">
+        {/* CTA above filters */}
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
+          margin: "0 0 8px 0"
+        }}>
+          <div style={{
+            backgroundColor: "rgba(0,0,0,0.85)",
+            color: "white",
+            padding: "14px 28px",
+            borderRadius: "40px",
+            fontSize: "22px",
+            fontWeight: 800,
+            letterSpacing: "2px",
+            textTransform: "uppercase",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.35)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            userSelect: "none"
+          }}>
+            TOUCH TO EXPLORE
+          </div>
+        </div>
         {/* Removed "Filter by Industry" header to allow more space for tags */}
         <div style={{
           display: "flex",

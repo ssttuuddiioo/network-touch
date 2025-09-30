@@ -240,24 +240,24 @@ input::placeholder, textarea::placeholder {
 /* Optimized tag filter container with more space for tags */
 .tag-filter-container {
   position: fixed;
-  bottom: 100px; /* Raised 300px from bottom */
-  left: 50%; /* Position from center */
-  transform: translateX(-50%); /* Center horizontally */
-  width: 92%; /* Wider to fit more tags per row */
-  max-width: 1800px; /* Increased maximum width */
+  bottom: 0; /* Pin to bottom on all screens */
+  left: 0;
+  right: 0;
+  width: 100%; /* Full width */
+  max-width: none; /* Remove max-width */
   height: auto; /* Auto height based on content */
-  max-height: 220px; /* Increased height since header was removed */
-  background-color: rgba(18, 18, 18, 0.8); /* Reduced opacity by 15% (from 0.95 to 0.8) */
+  max-height: 40vh; /* Keep within viewport and always visible */
+  padding: 24px 16px 50px 16px; /* 50px bottom padding */
+  background-color: #000000; /* Solid black background */
   backdrop-filter: blur(10px);
-  padding: 12px 16px; /* Simplified padding */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 -4px 20px rgba(0, 0, 0, 0.3); /* Shadow on both top and bottom */
-  z-index: 1000;
-  border: 1px solid var(--border); /* Border on all sides */
-  border-radius: 16px; /* Rounded corners on all sides */
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5); /* Shadow only on top */
+  z-index: 1100; /* Above other UI */
+  border: none; /* Remove border */
+  border-radius: 0; /* Remove rounded corners */
   overflow-y: auto; /* Allow scrolling if needed */
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Center content vertically */
+  justify-content: flex-start; /* Align content to top */
 }
 
 /* Optimized tag list to fill available space */
@@ -316,12 +316,12 @@ input::placeholder, textarea::placeholder {
 /* Responsive adjustments for tag container */
 @media (max-width: 768px) {
   .tag-filter-container {
-    padding: 8px;
-    max-height: 200px;
-    bottom: 200px; /* Adjusted for smaller screens but still raised */
-    border-radius: 12px;
-    width: 96%;
-    max-width: 600px;
+    padding: 12px 12px 24px 12px;
+    max-height: 45vh; /* Use more of the viewport on mobile */
+    bottom: 0; /* Keep pinned to bottom */
+    border-radius: 0; /* Full-width bar */
+    width: 100%;
+    max-width: none;
   }
   
   .tag-button {
@@ -341,12 +341,12 @@ input::placeholder, textarea::placeholder {
 /* For very large screens */
 @media (min-width: 1600px) {
   .tag-filter-container {
-    max-height: 240px;
-    bottom: 300px; /* Maintain 300px from bottom */
-    border-radius: 20px;
-    padding: 16px;
-    width: 85%;
-    max-width: 2200px;
+    max-height: 35vh;
+    bottom: 0; /* Keep pinned to bottom */
+    border-radius: 0;
+    padding: 24px 16px 50px 16px;
+    width: 100%;
+    max-width: none;
   }
   
   .tag-button {

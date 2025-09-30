@@ -7,6 +7,12 @@ DROP POLICY IF EXISTS "Enable insert access for all users" ON public.companies;
 DROP POLICY IF EXISTS "Enable update access for all users" ON public.companies;
 DROP POLICY IF EXISTS "Enable delete access for all users" ON public.companies;
 
+-- Stakeholders policies cleanup
+DROP POLICY IF EXISTS "Enable read access for all users" ON public.stakeholders;
+DROP POLICY IF EXISTS "Enable insert access for all users" ON public.stakeholders;
+DROP POLICY IF EXISTS "Enable update access for all users" ON public.stakeholders;
+DROP POLICY IF EXISTS "Enable delete access for all users" ON public.stakeholders;
+
 
 -- 1. Create a policy for reading data
 -- This policy allows anyone to view the companies table.
@@ -26,4 +32,17 @@ CREATE POLICY "Enable update access for all users" ON public.companies
 -- 4. Create a policy for deleting data
 -- This policy allows anyone to delete rows.
 CREATE POLICY "Enable delete access for all users" ON public.companies
+  FOR DELETE USING (true);
+
+-- Stakeholders policies
+CREATE POLICY "Enable read access for all users" ON public.stakeholders
+  FOR SELECT USING (true);
+
+CREATE POLICY "Enable insert access for all users" ON public.stakeholders
+  FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Enable update access for all users" ON public.stakeholders
+  FOR UPDATE USING (true);
+
+CREATE POLICY "Enable delete access for all users" ON public.stakeholders
   FOR DELETE USING (true);

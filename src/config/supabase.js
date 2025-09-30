@@ -15,6 +15,8 @@ export const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Table name for companies
 export const COMPANIES_TABLE = 'companies';
+// Table name for stakeholders
+export const STAKEHOLDERS_TABLE = 'stakeholders';
 
 // Check if Supabase is properly configured
 export const isSupabaseConfigured = () => {

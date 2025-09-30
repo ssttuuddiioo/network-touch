@@ -26,7 +26,8 @@ export function CompanyDetail() {
   // Find company by ID or by partial name match
   const findCompanyByIdOrName = (companies, searchId) => {
     // First try exact ID match
-    const exactMatch = companies.find(c => c.id === searchId);
+    const searchIdStr = String(searchId);
+    const exactMatch = companies.find(c => String(c.id) === searchIdStr);
     if (exactMatch) return exactMatch;
     
     // If no exact match, try to find by partial name match
@@ -395,6 +396,8 @@ export function CompanyDetail() {
                   {company.description}
                 </p>
               </div>
+
+              {/* CTA removed per request (only on main page) */}
 
               {/* Industry Tags */}
               {((company.industry && company.industry.length > 0) || (company.modifiers && company.modifiers.length > 0)) && (

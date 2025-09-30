@@ -1,10 +1,50 @@
 import { parseCSV } from '../utils/csvParser';
-import { loadCompaniesFromStorage, hasAdminChanges } from '../utils/dataStorage';
+import { loadCompaniesFromStorage, hasAdminChanges, loadStakeholdersFromStorage } from '../utils/dataStorage';
 import { isSupabaseConfigured } from '../config/supabase';
 import { checkMigrationStatus } from '../utils/csvMigration';
 import { getCachedData, cacheData, isOnline } from '../utils/cacheManager';
 
 const COMPANIES_CACHE_KEY = 'allCompanies';
+// Local stakeholders CSV served from /public (fallback only)
+const STAKEHOLDERS_CSV_URL = '/stakeholders.csv';
+
+// Helper: Normalize to app ID from name
+const normalizeId = (name) => (name || '')
+  .toLowerCase()
+  .replace(/[^a-z0-9]/g, '-')
+  .replace(/-+/g, '-')
+  .replace(/^-|-$/g, '');
+
+// Load stakeholders from Supabase, fallback to CSV if needed
+async function loadStakeholders() {
+  try {
+    // Try Supabase first
+    const sbStakeholders = await loadStakeholdersFromStorage();
+    if (sbStakeholders && sbStakeholders.length > 0) {
+      return sbStakeholders;
+    }
+
+    // Fallback to CSV
+    const response = await fetch(STAKEHOLDERS_CSV_URL, { cache: 'no-store' });
+    if (!response.ok) {
+      console.warn('Failed to fetch stakeholders CSV:', response.status);
+      return [];
+    }
+    const csvContent = await response.text();
+    const parsed = parseCSV(csvContent);
+    const withStakeholderTag = (parsed || []).map(c => ({
+      ...c,
+      id: c?.id || normalizeId(c?.name),
+      industry: Array.from(new Set([...(c.industry || []), 'Stakeholder'])),
+      tags: Array.from(new Set([...(c.tags || []), 'Stakeholder'])),
+    }));
+    console.log('Loaded stakeholders from CSV:', withStakeholderTag.length);
+    return withStakeholderTag;
+  } catch (err) {
+    console.warn('Error loading stakeholders CSV:', err);
+    return [];
+  }
+}
 
 /**
  * Main function to load companies with a cache-first strategy.
@@ -13,19 +53,28 @@ const COMPANIES_CACHE_KEY = 'allCompanies';
  * @param {function} setData - The React state setter to update the component with data.
  */
 export const loadCompaniesWithCache = (setData) => {
-  // 1. Try to load from cache for instant UI update
-  const cachedCompanies = getCachedData(COMPANIES_CACHE_KEY);
-  if (cachedCompanies && cachedCompanies.length > 0) {
-    setData(cachedCompanies);
-    console.log('Loaded from cache:', cachedCompanies.length, 'companies');
-    return;
-  }
+  // TEMP: Disable cache to always load fresh data from Supabase
+  // const cachedCompanies = getCachedData(COMPANIES_CACHE_KEY);
+  // if (cachedCompanies && cachedCompanies.length > 0) {
+  //   setData(cachedCompanies);
+  //   console.log('Loaded from cache:', cachedCompanies.length, 'companies');
+  //   return;
+  // }
 
-  // 2. If not in cache, load from Supabase or CSV
-  loadCompaniesFromCSV().then(companies => {
-    cacheData(COMPANIES_CACHE_KEY, companies);
-    setData(companies);
-    console.log('Loaded from source:', companies.length, 'companies');
+  // Always load from Supabase or CSV (bypassing cache)
+  Promise.all([
+    loadCompaniesFromCSV(),
+    loadStakeholders()
+  ]).then(([companies, stakeholders]) => {
+    // Merge by id, prefer primary companies data when duplicates exist
+    const byId = new Map();
+    for (const c of companies) byId.set(c.id, c);
+    for (const s of stakeholders) if (!byId.has(s.id)) byId.set(s.id, s);
+    const combined = Array.from(byId.values());
+
+    // cacheData(COMPANIES_CACHE_KEY, combined); // Disabled caching (dev)
+    setData(combined);
+    console.log('Loaded from source + stakeholders:', companies.length, '+', stakeholders.length, '=', combined.length);
   }).catch(error => {
     console.error('Error loading companies with cache:', error);
     setData([]); // Set to empty array on error
