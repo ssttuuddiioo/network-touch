@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
-import { motion, useMotionValue } from "framer-motion";
+import { motion, useMotionValue, AnimatePresence } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import { CompanyItem } from "./CompanyItem";
 import { FilterBar } from "./FilterBar";
@@ -229,7 +229,7 @@ export function CompanyGrid() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
     >
       {/* Conditionally show FilterBar */}
       {showFilters && (
@@ -361,7 +361,7 @@ export function CompanyGrid() {
 // Minimalist Company List Component
 function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, locationFilter, onClearLocationFilter }) {
   const [selectedTags, setSelectedTags] = useState([]);
-  const [filteredCompanies, setFilteredCompanies] = useState(companies);
+  const [animationKey, setAnimationKey] = useState(0);
   // Industry color mapping based on the provided color scheme
   const getIndustryColor = (industry) => {
     const industryLower = (industry && industry.toLowerCase()) || '';
@@ -398,6 +398,17 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
     return '#E0E0E0'; // Light gray
   };
 
+  // Filter companies based on selected tags - SINGLE calculation with useMemo
+  const filteredCompanies = React.useMemo(() => {
+    if (selectedTags.length === 0) {
+      return companies;
+    }
+    return companies.filter(company => {
+      const companyTags = [...(company.industry || []), ...(company.modifiers || [])];
+      return selectedTags.every(tag => companyTags.includes(tag));
+    });
+  }, [companies, selectedTags]);
+
   // Get available tags based on current filter selection
   const availableTags = React.useMemo(() => {
     // If no filters selected, show all tags
@@ -427,35 +438,23 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
     return Array.from(tagSet).sort();
   }, [companies, filteredCompanies, selectedTags]);
 
-  // Filter companies based on selected tags
-  React.useEffect(() => {
-    if (selectedTags.length === 0) {
-      setFilteredCompanies(companies);
-    } else {
-      const filtered = companies.filter(company => {
-        const companyTags = [...(company.industry || []), ...(company.modifiers || [])];
-        return selectedTags.every(tag => companyTags.includes(tag));
-      });
-      setFilteredCompanies(filtered);
-    }
-  }, [companies, selectedTags]);
-
-  const toggleTag = (tag) => {
+  const toggleTag = React.useCallback((tag) => {
     setSelectedTags(prev => 
       prev.includes(tag) 
         ? prev.filter(t => t !== tag)
         : [...prev, tag]
     );
-  };
+    setAnimationKey(prev => prev + 1);
+  }, []);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
+      exit={{ opacity: 0, y: -10 }}
       transition={{ 
-        duration: 0.6,
-        ease: [0.25, 0.46, 0.45, 0.94] // Smooth easing curve
+        duration: 0.3,
+        ease: [0.25, 0.46, 0.45, 0.94]
       }}
       style={{
         position: "fixed",
@@ -476,18 +475,15 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
             
             {/* Header Section */}
             <motion.div
-              initial={{ opacity: 0, y: -20 }}
+              initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
               style={{
                 marginBottom: "20px",
                 paddingTop: "0px"
               }}
             >
-              <motion.h2
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
+              <h2
                 style={{
                   fontSize: "32px",
                   fontWeight: "700",
@@ -498,7 +494,7 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
                 }}
               >
                 THE MICHIGAN CENTRAL ECOSYSTEM
-              </motion.h2>
+              </h2>
 
               {/* Subtitle */}
               <div
@@ -517,10 +513,7 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
 
               {/* Location Filter Indicator */}
               {locationFilter && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.4 }}
+                <div
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -559,31 +552,33 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
                   >
                     Clear Filter
                   </motion.button>
-                </motion.div>
+                </div>
               )}
             </motion.div>
 
+        <AnimatePresence mode="popLayout">
         {filteredCompanies.map((company, index) => (
           <motion.div
-            key={company.id}
+            key={`${company.id}-${animationKey}`}
+            layout
             initial={{ 
-              opacity: 0, 
-              y: 60,
+              opacity: 0,
               scale: 0.95
             }}
             animate={{ 
-              opacity: 1, 
-              y: 0,
+              opacity: 1,
               scale: 1
             }}
+            exit={{ 
+              opacity: 0,
+              scale: 0.95,
+              transition: { duration: 0.15 }
+            }}
             transition={{ 
-              delay: index * 0.08,
-              duration: 0.7,
-              ease: [0.25, 0.46, 0.45, 0.94],
-              scale: {
-                duration: 0.5,
-                ease: [0.25, 0.46, 0.45, 0.94]
-              }
+              delay: index * 0.0125,
+              duration: 0.3,
+              ease: "easeOut",
+              layout: { duration: 0.2, ease: "easeInOut" }
             }}
             onClick={() => onCompanyClick(company)}
             style={{
@@ -592,33 +587,25 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
               cursor: "pointer",
               display: "flex",
               alignItems: "flex-start",
-              gap: "16px"
+              gap: "16px",
+              willChange: "transform, opacity"
             }}
             whileHover={{ 
               backgroundColor: "var(--bg-card)",
-              scale: 1.02,
+              x: 4,
               transition: { 
-                duration: 0.3,
-                ease: [0.25, 0.46, 0.45, 0.94]
+                duration: 0.2
               }
             }}
             whileTap={{ 
               scale: 0.98,
               transition: { 
-                duration: 0.1,
-                ease: [0.25, 0.46, 0.45, 0.94]
+                duration: 0.1
               }
             }}
           >
             {/* Company Logo/Emoji */}
-            <motion.div 
-              initial={{ scale: 0, rotate: -180 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ 
-                delay: index * 0.08 + 0.2,
-                duration: 0.6,
-                ease: [0.25, 0.46, 0.45, 0.94]
-              }}
+            <div 
               style={{
                 width: "48px",
                 height: "48px",
@@ -642,6 +629,7 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
                 <img 
                   src={company.logo} 
                   alt={company.name}
+                  loading="lazy"
                   style={{ 
                     width: "80%", 
                     height: "80%", 
@@ -654,28 +642,14 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
                   }}
                 />
               )}
-            </motion.div>
+            </div>
 
             {/* Company Info */}
-            <motion.div 
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ 
-                delay: index * 0.08 + 0.3,
-                duration: 0.6,
-                ease: [0.25, 0.46, 0.45, 0.94]
-              }}
+            <div 
               style={{ flex: 1, minWidth: 0 }}
             >
               {/* Company Name */}
-              <motion.h2 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ 
-                  delay: index * 0.08 + 0.4,
-                  duration: 0.5,
-                  ease: [0.25, 0.46, 0.45, 0.94]
-                }}
+              <h2 
                 style={{
                   margin: "0 0 6px 0",
                   fontSize: "24px",
@@ -685,17 +659,10 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
                 }}
               >
                 {company.name}
-              </motion.h2>
+              </h2>
 
               {/* Company Description */}
-              <motion.p 
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ 
-                  delay: index * 0.08 + 0.5,
-                  duration: 0.5,
-                  ease: [0.25, 0.46, 0.45, 0.94]
-                }}
+              <p 
                 style={{
                   margin: "0 0 10px 0",
                   fontSize: "14px",
@@ -711,17 +678,10 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
                 }}
               >
                 {company.description}
-              </motion.p>
+              </p>
 
               {/* Tags and Industry */}
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ 
-                  delay: index * 0.08 + 0.6,
-                  duration: 0.4,
-                  ease: [0.25, 0.46, 0.45, 0.94]
-                }}
+              <div 
                 style={{
                   display: "flex",
                   flexWrap: "wrap",
@@ -731,20 +691,8 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
               >
             {/* All Company Tags (Industry + Modifiers) */}
             {[...(company.industry || []), ...(company.modifiers || [])].map((tag, tagIndex) => (
-              <motion.span
+              <span
                 key={`${tag}-${tagIndex}`}
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ 
-                  delay: index * 0.08 + 0.7 + tagIndex * 0.1,
-                  duration: 0.4,
-                  ease: [0.25, 0.46, 0.45, 0.94]
-                }}
-                whileHover={{ 
-                  scale: 1.1,
-                  transition: { duration: 0.2 }
-                }}
-                whileTap={{ scale: 0.95 }}
                 onClick={(e) => {
                   e.stopPropagation(); // Prevent company click
                   toggleTag(tag);
@@ -766,19 +714,12 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
                 }}
               >
                 {tag}
-              </motion.span>
+              </span>
             ))}
 
             {/* Location */}
             {company.location && (
-              <motion.span
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ 
-                  delay: index * 0.08 + 0.8,
-                  duration: 0.3,
-                  ease: [0.25, 0.46, 0.45, 0.94]
-                }}
+              <span
                 style={{
                   fontSize: "11px",
                   color: "var(--text-primary)",
@@ -787,34 +728,20 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
                 }}
               >
                 {company.location}
-              </motion.span>
+              </span>
             )}
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
 
             {/* Right-aligned info */}
-            <motion.div 
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ 
-                delay: index * 0.08 + 0.4,
-                duration: 0.6,
-                ease: [0.25, 0.46, 0.45, 0.94]
-              }}
+            <div 
               style={{
                 textAlign: "right",
                 flexShrink: 0,
                 minWidth: "90px"
               }}
             >
-            <motion.div 
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ 
-                delay: index * 0.08 + 0.5,
-                duration: 0.4,
-                ease: [0.25, 0.46, 0.45, 0.94]
-              }}
+            <div 
               style={{
                 fontSize: "12px",
                 color: "var(--text-primary)",
@@ -825,15 +752,8 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
               }}
             >
               {(company.industry && company.industry[0]) || "Technology"}
-            </motion.div>
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ 
-                delay: index * 0.08 + 0.6,
-                duration: 0.4,
-                ease: [0.25, 0.46, 0.45, 0.94]
-              }}
+            </div>
+            <div 
               style={{
                 fontSize: "10px",
                 color: "var(--text-primary)",
@@ -841,10 +761,11 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
               }}
             >
               {company.location || "Detroit"}
-            </motion.div>
-            </motion.div>
+            </div>
+            </div>
           </motion.div>
         ))}
+        </AnimatePresence>
 
         {filteredCompanies.length === 0 && companies.length > 0 && (
           <motion.div 
@@ -861,7 +782,10 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
               No companies match the selected filters.
             </p>
             <motion.button
-              onClick={() => setSelectedTags([])}
+              onClick={() => {
+                setSelectedTags([]);
+                setAnimationKey(prev => prev + 1);
+              }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               style={{
@@ -895,6 +819,33 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
       
       {/* Tag Filter Section - Fixed at the bottom */}
       <div className="tag-filter-container">
+        {/* Scroll indicator - only show when more than 5 companies */}
+        {filteredCompanies.length > 5 && (
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "100%",
+            marginBottom: "12px"
+          }}>
+            <div style={{
+              backgroundColor: "rgba(0,0,0,0.85)",
+              color: "white",
+              padding: "8px 20px",
+              borderRadius: "20px",
+              fontSize: "14px",
+              fontWeight: 600,
+              letterSpacing: "0.5px",
+              textTransform: "uppercase",
+              border: "1px solid rgba(255,255,255,0.08)",
+              userSelect: "none",
+              opacity: 0.7
+            }}>
+              Scroll down to see more
+            </div>
+          </div>
+        )}
+        
         {/* CTA above filters */}
         <div style={{
           display: "flex",
@@ -905,12 +856,12 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
         }}>
           <div style={{
             backgroundColor: "rgba(0,0,0,0.85)",
-            color: "white",
-            padding: "14px 28px",
-            borderRadius: "40px",
-            fontSize: "22px",
+            color: "#90EE90",
+            padding: "28px 56px",
+            borderRadius: "60px",
+            fontSize: "54px",
             fontWeight: 800,
-            letterSpacing: "2px",
+            letterSpacing: "4px",
             textTransform: "uppercase",
             boxShadow: "0 8px 24px rgba(0,0,0,0.35)",
             border: "1px solid rgba(255,255,255,0.08)",
@@ -928,9 +879,17 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
           maxWidth: "100%"
         }}>
           {/* Clear Filters Button - Only visible when filters are active */}
+          <AnimatePresence>
           {selectedTags.length > 0 && (
-            <button
-              onClick={() => setSelectedTags([])}
+            <motion.button
+              initial={{ opacity: 0, scale: 0.9, y: -10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: -10 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              onClick={() => {
+                setSelectedTags([]);
+                setAnimationKey(prev => prev + 1);
+              }}
               style={{
                 padding: "12px 24px",
                 backgroundColor: "var(--accent-red)",
@@ -949,8 +908,9 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
               }}
             >
               Clear All
-            </button>
+            </motion.button>
           )}
+          </AnimatePresence>
 
           {/* Dynamic Tag Filter Pills */}
           <div className="tag-list">

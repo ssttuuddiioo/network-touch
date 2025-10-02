@@ -21,7 +21,7 @@ export function CompanyDetail() {
   const [loading, setLoading] = React.useState(true);
   const [useEmojiLogo, setUseEmojiLogo] = React.useState(false);
   const [navigationDirection, setNavigationDirection] = React.useState(null);
-  const [timeRemaining, setTimeRemaining] = React.useState(120); // 120 seconds = 2 minutes
+  const [timeRemaining, setTimeRemaining] = React.useState(90); // 90 seconds = 1 minute 30 seconds
 
   // Find company by ID or by partial name match
   const findCompanyByIdOrName = (companies, searchId) => {
@@ -129,10 +129,10 @@ export function CompanyDetail() {
     }
   }, [navigationDirection]);
   
-  // Auto-navigate back to directory list after 2 minutes
+  // Auto-navigate back to directory list after 1 minute 30 seconds of inactivity
   React.useEffect(() => {
     // Reset timer when component mounts or company changes
-    setTimeRemaining(120);
+    setTimeRemaining(90);
     
     // Update timer every second
     const timerInterval = setInterval(() => {
@@ -146,8 +146,31 @@ export function CompanyDetail() {
       });
     }, 1000);
     
-    // Clean up interval when component unmounts or company changes
-    return () => clearInterval(timerInterval);
+    // Reset timer on any user interaction
+    const resetTimer = () => {
+      setTimeRemaining(90);
+    };
+    
+    // Add event listeners for various user interactions
+    window.addEventListener('mousemove', resetTimer);
+    window.addEventListener('mousedown', resetTimer);
+    window.addEventListener('keydown', resetTimer);
+    window.addEventListener('touchstart', resetTimer);
+    window.addEventListener('touchmove', resetTimer);
+    window.addEventListener('scroll', resetTimer);
+    window.addEventListener('wheel', resetTimer);
+    
+    // Clean up interval and event listeners when component unmounts or company changes
+    return () => {
+      clearInterval(timerInterval);
+      window.removeEventListener('mousemove', resetTimer);
+      window.removeEventListener('mousedown', resetTimer);
+      window.removeEventListener('keydown', resetTimer);
+      window.removeEventListener('touchstart', resetTimer);
+      window.removeEventListener('touchmove', resetTimer);
+      window.removeEventListener('scroll', resetTimer);
+      window.removeEventListener('wheel', resetTimer);
+    };
   }, [navigate, id]);
 
   // Keyboard navigation
@@ -246,22 +269,22 @@ export function CompanyDetail() {
           ease: [0.25, 0.46, 0.45, 0.94] 
         }}
           style={{ 
-          padding: "20px 0 0", 
-          maxWidth: "90%",
+          padding: "200px 0 0", 
+          maxWidth: "67.5%",
           margin: "0 auto",
-          borderRadius: "16px",
+          borderRadius: "12px",
           overflow: "hidden",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.3)"
+          boxShadow: "0 7.5px 22.5px rgba(0,0,0,0.3)"
         }}
       >
         
         {/* Large Photo Section - Now at the top with logo overlay */}
         <motion.section
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.3 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
           style={{
-            margin: "0 auto 20px",
+            margin: "0 auto 15px",
             overflow: "hidden",
             backgroundColor: "transparent",
             width: "100%",
@@ -279,7 +302,7 @@ export function CompanyDetail() {
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
-                borderRadius: "24px"
+                borderRadius: "18px"
               }}
            />
            
@@ -288,15 +311,15 @@ export function CompanyDetail() {
             layoutId={`company-${company.id}`}
             style={{
               position: "absolute",
-              top: "20px",
-              left: "20px",
-              width: "80px",
-              height: "80px",
+              top: "15px",
+              left: "15px",
+              width: "60px",
+              height: "60px",
               borderRadius: "50%",
               overflow: "hidden",
               backgroundColor: "white",
-              border: "2px solid white",
-              boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
+              border: "1.5px solid white",
+              boxShadow: "0 3px 12px rgba(0,0,0,0.2)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -317,55 +340,55 @@ export function CompanyDetail() {
         
         {/* Company Name, QR Code, Description, and Tags Section */}
         <motion.section
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.4 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
           style={{
-            margin: "0 0 20px",
+            margin: "0 0 15px",
             backgroundColor: "#121212",
-            padding: "20px 0",
+            padding: "15px 0",
           }}
         >
           {/* Content Grid - QR Code on left, Company Name, Description and Tags on right */}
           <div style={{ 
             display: "grid",
             gridTemplateColumns: "auto 1fr",
-            gap: "20px",
+            gap: "15px",
             alignItems: "start"
           }}>
             {/* QR Code Card - Left Side */}
             <div style={{
-              padding: "16px",
+              padding: "12px",
               backgroundColor: "#1E1E1E", // Dark card background
-              borderRadius: "12px",
+              borderRadius: "9px",
               border: "1px solid #333",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "space-between",
-              minWidth: "160px",
+              minWidth: "120px",
               position: "relative",
               overflow: "hidden",
               alignSelf: "flex-start"
             }}>
               <p style={{
                 color: "#999",
-                fontSize: "12px",
+                fontSize: "9px",
                 textAlign: "center",
-                margin: "0 0 12px 0",
+                margin: "0 0 9px 0",
                 fontWeight: "600",
                 textTransform: "uppercase",
-                letterSpacing: "0.5px",
+                letterSpacing: "0.375px",
                 fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
               }}>
                 COMPANY WEBSITE
               </p>
               <div style={{
                 backgroundColor: "white",
-                padding: "10px",
-                borderRadius: "8px"
+                padding: "7.5px",
+                borderRadius: "6px"
               }}>
-                <CompanyQRCode companyId={company.id} size={128} />
+                <CompanyQRCode companyId={company.id} size={96} />
               </div>
             </div>
 
@@ -373,8 +396,8 @@ export function CompanyDetail() {
             <div>
               {/* Company Name */}
               <h2 style={{ 
-                margin: "0 0 20px 0", 
-                fontSize: "42px", 
+                margin: "0 0 15px 0", 
+                fontSize: "31.5px", 
                 color: "white",
                 fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
                 fontWeight: "600",
@@ -384,9 +407,9 @@ export function CompanyDetail() {
 
               {/* Description and Tags */}
               {/* Description */}
-              <div style={{ marginBottom: "20px" }}>
+              <div style={{ marginBottom: "15px" }}>
                 <p style={{
-                  fontSize: "18px",
+                  fontSize: "13.5px",
                   color: "white",
                   lineHeight: "1.6",
                   margin: "0",
@@ -404,7 +427,7 @@ export function CompanyDetail() {
                 <div
                   style={{
                     display: "flex",
-                    gap: "12px",
+                    gap: "9px",
                     flexWrap: "wrap",
                     alignContent: "flex-start"
                   }}
@@ -414,14 +437,14 @@ export function CompanyDetail() {
                     <div
                       key={`industry-${index}`}
                       style={{
-                        padding: "8px 16px",
+                        padding: "6px 12px",
                         backgroundColor: "#90EE90", // Light green based on your color scheme
                         color: "#000000",
-                        borderRadius: "30px",
-                        fontSize: "12px",
+                        borderRadius: "22.5px",
+                        fontSize: "9px",
                         fontWeight: "600",
                         textTransform: "uppercase",
-                        letterSpacing: "0.5px",
+                        letterSpacing: "0.375px",
                         fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif"
                       }}
                     >
@@ -434,14 +457,14 @@ export function CompanyDetail() {
                     <div
                       key={`modifier-${index}`}
                       style={{
-                        padding: "8px 16px",
+                        padding: "6px 12px",
                         backgroundColor: "#D3D3D3", // Light gray based on your color scheme
                         color: "#000000",
-                        borderRadius: "30px",
-                        fontSize: "12px",
+                        borderRadius: "22.5px",
+                        fontSize: "9px",
                         fontWeight: "600",
                         textTransform: "uppercase",
-                        letterSpacing: "0.5px",
+                        letterSpacing: "0.375px",
                         fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif"
                       }}
                     >
@@ -456,23 +479,23 @@ export function CompanyDetail() {
 
         {/* Navigation Arrows and Back Button - Centered */}
         <motion.section
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.7 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: "20px",
+            gap: "15px",
             alignItems: "center",
             justifyContent: "center",
-            padding: "0 0 20px"
+            padding: "0 0 15px"
           }}
         >
           {/* Navigation Arrows */}
           {companies.length > 1 && (
             <div style={{
               display: "flex",
-              gap: "15px",
+              gap: "11.25px",
               alignItems: "center",
               justifyContent: "center"
             }}>
@@ -483,8 +506,8 @@ export function CompanyDetail() {
                 whileHover={canNavigatePrev ? { scale: 1.1 } : {}}
                 whileTap={canNavigatePrev ? { scale: 0.95 } : {}}
                 style={{
-                  width: "45px",
-                  height: "45px",
+                  width: "33.75px",
+                  height: "33.75px",
                   borderRadius: "50%",
                   backgroundColor: canNavigatePrev ? "#333" : "#222",
                   border: "none",
@@ -492,9 +515,9 @@ export function CompanyDetail() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: "20px",
+                  fontSize: "15px",
                   color: canNavigatePrev ? "white" : "#555",
-                  boxShadow: canNavigatePrev ? "0 4px 12px rgba(0,0,0,0.3)" : "none",
+                  boxShadow: canNavigatePrev ? "0 3px 9px rgba(0,0,0,0.3)" : "none",
                   opacity: canNavigatePrev ? 1 : 0.5
                 }}
               >
@@ -508,8 +531,8 @@ export function CompanyDetail() {
                 whileHover={canNavigateNext ? { scale: 1.1 } : {}}
                 whileTap={canNavigateNext ? { scale: 0.95 } : {}}
                 style={{
-                  width: "45px",
-                  height: "45px",
+                  width: "33.75px",
+                  height: "33.75px",
                   borderRadius: "50%",
                   backgroundColor: canNavigateNext ? "#333" : "#222",
                   border: "none",
@@ -517,9 +540,9 @@ export function CompanyDetail() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: "20px",
+                  fontSize: "15px",
                   color: canNavigateNext ? "white" : "#555",
-                  boxShadow: canNavigateNext ? "0 4px 12px rgba(0,0,0,0.3)" : "none",
+                  boxShadow: canNavigateNext ? "0 3px 9px rgba(0,0,0,0.3)" : "none",
                   opacity: canNavigateNext ? 1 : 0.5
                 }}
               >
@@ -534,16 +557,16 @@ export function CompanyDetail() {
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "8px",
-              padding: "16px 24px",
+              gap: "6px",
+              padding: "12px 18px",
               backgroundColor: "#F8D57E", // Yellow color from screenshot
               color: "#000000",
               border: "none",
-              borderRadius: "30px",
+              borderRadius: "22.5px",
               cursor: "pointer",
-              fontSize: "16px",
+              fontSize: "12px",
               fontWeight: "600",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.2)"
+              boxShadow: "0 3px 9px rgba(0,0,0,0.2)"
             }}
             whileTap={{ scale: 0.95 }}
             whileHover={{ scale: 1.05 }}
@@ -556,7 +579,7 @@ export function CompanyDetail() {
 {/* Timer functionality is still active but visual indicator is hidden */}
         
         {/* Add bottom padding */}
-        <div style={{ height: "40px" }}></div>
+        <div style={{ height: "30px" }}></div>
       </motion.main>
     </motion.div>
   );
