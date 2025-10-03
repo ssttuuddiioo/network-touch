@@ -106,6 +106,9 @@ button {
   touch-action: manipulation;
   min-height: 44px; /* iOS accessibility guidelines */
   min-width: 44px;
+  cursor: pointer !important;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* Smooth scrolling for company detail page */
@@ -114,6 +117,23 @@ button {
   scroll-behavior: smooth;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Prevent text cursor on all divs and non-input elements */
+div:not([contenteditable="true"]) {
+  cursor: default;
+  caret-color: transparent;
+}
+
+/* Ensure company list items don't show text cursor */
+.company-grid-container div {
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: default;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -209,11 +229,19 @@ button, .company-item, .filter-card {
   will-change: transform, opacity;
   backface-visibility: hidden;
   transform-style: preserve-3d;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 /* Form input styling for better readability */
 input, textarea, select {
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  cursor: text !important;
+  caret-color: var(--text-primary) !important;
 }
 
 input:focus, textarea:focus, select:focus {

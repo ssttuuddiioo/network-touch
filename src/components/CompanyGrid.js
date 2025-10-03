@@ -8,6 +8,43 @@ import { loadCompaniesWithCache } from "../data/companies";
 import { subscribeToDataChanges } from "../utils/dataStorage";
 import { getEmojiPlaceholder, isValidLogoUrl } from "../utils/emojiPlaceholders";
 
+// Performance detection hook
+function usePerformanceMode() {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [isLowEndDevice, setIsLowEndDevice] = useState(false);
+
+  useEffect(() => {
+    // Check user's motion preference
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+    
+    const handleChange = (e) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', handleChange);
+
+    // Detect low-end device (hardware concurrency as a proxy)
+    const cores = navigator.hardwareConcurrency || 4;
+    const memory = navigator.deviceMemory || 4; // GB
+    
+    // Consider low-end if <= 4 cores or <= 4GB RAM
+    setIsLowEndDevice(cores <= 4 || memory <= 4);
+
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  // Return animation settings based on performance
+  return {
+    shouldReduceMotion: prefersReducedMotion,
+    isLowEnd: isLowEndDevice,
+    // Limit stagger to first 20 items on low-end devices
+    maxStaggerItems: isLowEndDevice ? 20 : Infinity,
+    // Faster, simpler animations for low-end
+    duration: isLowEndDevice ? 0.2 : 0.3,
+    staggerDelay: isLowEndDevice ? 0.008 : 0.0125,
+    // Disable layout animations on low-end (expensive)
+    useLayout: !isLowEndDevice && !prefersReducedMotion
+  };
+}
+
 export function CompanyGrid() {
   const [dimensions, setDimensions] = React.useState(() => getResponsiveDimensions());
   const [selectedIndustries, setSelectedIndustries] = useState([]);
@@ -362,6 +399,7 @@ export function CompanyGrid() {
 function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, locationFilter, onClearLocationFilter }) {
   const [selectedTags, setSelectedTags] = useState([]);
   const [animationKey, setAnimationKey] = useState(0);
+  const performance = usePerformanceMode();
   // Industry color mapping based on the provided color scheme
   const getIndustryColor = (industry) => {
     const industryLower = (industry && industry.toLowerCase()) || '';
@@ -557,28 +595,33 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
             </motion.div>
 
         <AnimatePresence mode="popLayout">
-        {filteredCompanies.map((company, index) => (
+        {filteredCompanies.map((company, index) => {
+          // Cap stagger delay for performance on low-end devices
+          const shouldAnimate = index < performance.maxStaggerItems;
+          const animationDelay = shouldAnimate ? index * performance.staggerDelay : 0;
+          
+          return (
           <motion.div
             key={`${company.id}-${animationKey}`}
-            layout
-            initial={{ 
+            layout={performance.useLayout}
+            initial={performance.shouldReduceMotion ? false : { 
               opacity: 0,
               scale: 0.95
             }}
-            animate={{ 
+            animate={performance.shouldReduceMotion ? {} : { 
               opacity: 1,
               scale: 1
             }}
-            exit={{ 
+            exit={performance.shouldReduceMotion ? {} : { 
               opacity: 0,
               scale: 0.95,
-              transition: { duration: 0.15 }
+              transition: { duration: performance.duration * 0.5 }
             }}
-            transition={{ 
-              delay: index * 0.0125,
-              duration: 0.3,
+            transition={performance.shouldReduceMotion ? {} : { 
+              delay: animationDelay,
+              duration: performance.duration,
               ease: "easeOut",
-              layout: { duration: 0.2, ease: "easeInOut" }
+              layout: performance.useLayout ? { duration: 0.2, ease: "easeInOut" } : false
             }}
             onClick={() => onCompanyClick(company)}
             style={{
@@ -588,17 +631,18 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
               display: "flex",
               alignItems: "flex-start",
               gap: "16px",
-              willChange: "transform, opacity"
+              // Only hint GPU acceleration if animating and not low-end
+              willChange: shouldAnimate && !performance.isLowEnd ? "transform, opacity" : "auto"
             }}
-            whileHover={{ 
+            whileHover={performance.shouldReduceMotion ? {} : { 
               backgroundColor: "var(--bg-card)",
-              x: 4,
+              x: performance.isLowEnd ? 0 : 4,
               transition: { 
                 duration: 0.2
               }
             }}
-            whileTap={{ 
-              scale: 0.98,
+            whileTap={performance.shouldReduceMotion ? {} : { 
+              scale: performance.isLowEnd ? 1 : 0.98,
               transition: { 
                 duration: 0.1
               }
@@ -764,7 +808,8 @@ function CompanyList({ companies, onCompanyClick, showFilters, setViewMode, loca
             </div>
             </div>
           </motion.div>
-        ))}
+          );
+        })}
         </AnimatePresence>
 
         {filteredCompanies.length === 0 && companies.length > 0 && (

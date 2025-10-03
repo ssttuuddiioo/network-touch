@@ -14,9 +14,37 @@ const getPlaceholderImage = (name, index) => {
   return `https://via.placeholder.com/800x400/${colors[colorIndex]}/FFFFFF?text=${encodeURIComponent(name)}`;
 };
 
+// Performance detection hook
+function usePerformanceMode() {
+  const [prefersReducedMotion, setPrefersReducedMotion] = React.useState(false);
+  const [isLowEndDevice, setIsLowEndDevice] = React.useState(false);
+
+  React.useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+    
+    const handleChange = (e) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', handleChange);
+
+    const cores = navigator.hardwareConcurrency || 4;
+    const memory = navigator.deviceMemory || 4;
+    setIsLowEndDevice(cores <= 4 || memory <= 4);
+
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  return {
+    shouldReduceMotion: prefersReducedMotion,
+    isLowEnd: isLowEndDevice,
+    duration: isLowEndDevice ? 0.3 : 0.4,
+    delay: isLowEndDevice ? 0.05 : 0.1
+  };
+}
+
 export function CompanyDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const performance = usePerformanceMode();
   const [companies, setCompanies] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [useEmojiLogo, setUseEmojiLogo] = React.useState(false);
@@ -280,9 +308,12 @@ export function CompanyDetail() {
         
         {/* Large Photo Section - Now at the top with logo overlay */}
         <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+          initial={performance.shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+          animate={performance.shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
+          transition={performance.shouldReduceMotion ? {} : { 
+            duration: performance.duration, 
+            ease: [0.25, 0.46, 0.45, 0.94] 
+          }}
           style={{
             margin: "0 auto 15px",
             overflow: "hidden",
@@ -340,9 +371,13 @@ export function CompanyDetail() {
         
         {/* Company Name, QR Code, Description, and Tags Section */}
         <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
+          initial={performance.shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+          animate={performance.shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
+          transition={performance.shouldReduceMotion ? {} : { 
+            duration: performance.duration, 
+            delay: performance.delay, 
+            ease: [0.25, 0.46, 0.45, 0.94] 
+          }}
           style={{
             margin: "0 0 15px",
             backgroundColor: "#121212",
@@ -479,9 +514,13 @@ export function CompanyDetail() {
 
         {/* Navigation Arrows and Back Button - Centered */}
         <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+          initial={performance.shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+          animate={performance.shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
+          transition={performance.shouldReduceMotion ? {} : { 
+            duration: performance.duration, 
+            delay: performance.delay * 2, 
+            ease: [0.25, 0.46, 0.45, 0.94] 
+          }}
           style={{
             display: "flex",
             flexDirection: "column",
